@@ -824,7 +824,7 @@ function renderRiesgo(){renderRkControles();renderRkProv();renderRkMatriz();}
 window.__renderRiesgo=renderRiesgo;
 function renderRkControles(){
   const el=document.getElementById('riesgo-controles');if(!el)return;
-  const data=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),usd:c.monto,exc:CTRLMETA[i].exc,desv:CTRLMETA[i].desv,lvl:c.level})).sort((a,b)=>b.usd-a.usd);
+  const data=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),usd:(USD_CTRL['C'+(i+1)]||0),exc:CTRLMETA[i].exc,desv:CTRLMETA[i].desv,lvl:c.level})).sort((a,b)=>b.usd-a.usd);
   const max=Math.max(...data.map(d=>d.usd))||1;
   el.innerHTML=data.map(d=>{const col=d.lvl==='crit'?'var(--crit)':d.lvl==='warn'?'var(--warn)':'var(--ok)';
     const tip=`<b>C${d.i+1} · ${d.name}</b><br>USD ${d.usd.toLocaleString('es-EC')} en riesgo<br>${d.exc} excepciones · ${d.desv} desviaciones<br><span style="color:var(--muted)">clic para ver las transacciones</span>`.replace(/"/g,'&quot;');
@@ -840,7 +840,7 @@ function renderRkProv(){
 function renderRkMatriz(){
   const el=document.getElementById('riesgo-matriz');if(!el)return;
   const W=Math.max(320,el.clientWidth||600),H=260,pad={l:54,r:18,t:14,b:28};
-  const pts=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),x:CTRLMETA[i].exc,y:c.monto,s:Math.max(1,...c.rows.map(r=>scoreRow(r))),lvl:c.level}));
+  const pts=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),x:CTRLMETA[i].exc,y:(USD_CTRL['C'+(i+1)]||0),s:Math.max(1,...c.rows.map(r=>scoreRow(r))),lvl:c.level}));
   const maxX=Math.max(10,...pts.map(p=>p.x)),maxY=Math.max(1,...pts.map(p=>p.y));
   const sx=v=>pad.l+(v/maxX)*(W-pad.l-pad.r),sy=v=>H-pad.b-(v/maxY)*(H-pad.t-pad.b);
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">`;
@@ -883,7 +883,7 @@ function exControls(){
     h+=`<div class="exg-card" onclick="exOpen(${i})" style="${n?'':'opacity:.5'}">
       <div class="cst">${m.etapa}</div><div class="cid">C${i+1}</div><div class="cnm">${nm}</div>
       <div class="cob">${m.obj}</div>
-      <div class="cft"><div class="cct" style="color:${n?col:'var(--muted)'}">${n.toLocaleString('es-EC')}</div><div class="cus">USD ${c.monto.toLocaleString('es-EC')}</div></div>
+      <div class="cft"><div class="cct" style="color:${n?col:'var(--muted)'}">${n.toLocaleString('es-EC')}</div><div class="cus">USD ${(USD_CTRL['C'+(i+1)]||0).toLocaleString('es-EC')}</div></div>
       <div class="cbr"><i style="width:${Math.round(n/maxN*100)}%;background:${col}"></i></div></div>`;});
   return h+'</div>';
 }
@@ -919,7 +919,7 @@ function exTxns(){
 
 /* ===== Focos de atención · curva de cobertura de riesgo (ISACA) ===== */
 const POB_TOTAL=2600, CONF_N=2080, DESV_N=388, EXC_N=132;
-let FOCUS_TX=null, CUM=null, USD_TOTAL=0;
+let FOCUS_TX=null, CUM=null, USD_TOTAL=0, USD_EXC=0, USD_DESV=0, USD_CTRL={};
 function scoreOf(controles,riesgo,monto){
   const base=controles.reduce((s,c)=>s+(PESO_NIVEL[ctrlLevel(c)]||10),0);
   const sev=riesgo==='CRITICO'?1.0:riesgo==='ADVERTENCIA'?0.7:0.4;
@@ -931,27 +931,35 @@ function buildPoblacion(){
   let s=424242;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
   const pick=a=>a[Math.floor(rnd()*a.length)];
   const PROV=['100234','100512','100891','100781','101044','100345','101200','101300','100678','999001','100023'];
-  const mkdoc=cc=>{if(cc==='C5'||cc==='C4')return (rnd()<0.5?'RE 500003':'45000112')+String(1000+Math.floor(rnd()*8999)).slice(0,4);
+  const mkdoc=cc=>{if(cc==='C5'||cc==='C4')return (rnd()<0.5?'RE 500003':'450001')+String(1000+Math.floor(rnd()*8999)).slice(0,4);
     if(cc==='C6')return 'ZP 20000'+String(10000+Math.floor(rnd()*9999)).slice(1,5);
     if(cc==='C7')return 'A-100-2025-'+String(1+Math.floor(rnd()*80)).padStart(3,'0');
-    return '450001'+String(10000+Math.floor(rnd()*9999)).slice(0,4);};
+    return '450001'+String(1000+Math.floor(rnd()*8999)).slice(0,4);};
   const fecha=()=>`2025-${String(1+Math.floor(rnd()*8)).padStart(2,'0')}-${String(1+Math.floor(rnd()*28)).padStart(2,'0')}`;
-  const EXC_TPL=[{c:['C5'],h:'Duplicado exacto mismo día'},{c:['C5','C4'],h:'Duplicado en ventana +3 días'},
-    {c:['C4'],h:'Factura sin recepción'},{c:['C4','C1'],h:'Diferencia cantidad sobre tolerancia'},
-    {c:['C6'],h:'Anticipo sin EBELN asociado'},{c:['C6','C1'],h:'Pago antes de recepción'},
-    {c:['C2'],h:'Sin aprobación sobre el umbral'},{c:['C3'],h:'Proveedor inexistente en maestro'}];
-  const DESV_TPL=[{c:['C4'],h:'Diferencia dentro de tolerancia'},{c:['C6'],h:'Pago anticipado con respaldo'},
-    {c:['C2'],h:'Aprobado con un nivel de dos'},{c:['C1'],h:'PO regularizada sin PR previa'},
-    {c:['C7'],h:'Inversión sin activo/presupuesto'},{c:['C3'],h:'Proveedor con datos observados'}];
-  const gen=(n,tpls,riesgo,mMin,mMax)=>{const arr=[];
-    for(let i=0;i<n;i++){const t=pick(tpls),monto=Math.round(mMin+rnd()*(mMax-mMin));
-      arr.push({controles:t.c.slice(),desc:t.h,riesgo,monto,lifnr:pick(PROV),fecha:fecha(),ctrl:t.c[0],ebeln:mkdoc(t.c[0]),score:scoreOf(t.c,riesgo,monto)});}
-    return arr;};
-  const exc=gen(EXC_N,EXC_TPL,'CRITICO',5000,55000);    // excepciones: montos altos
-  const desv=gen(DESV_N,DESV_TPL,'ADVERTENCIA',300,3000); // desviaciones: montos bajos
-  FOCUS_TX=exc.concat(desv).sort((a,b)=>b.score-a.score);
-  USD_TOTAL=FOCUS_TX.reduce((s2,t)=>s2+t.monto,0);
+  const HALL={C1:{exc:'Compra sin requisición autorizada',desv:'PO regularizada sin PR previa'},
+    C2:{exc:'Sin aprobación sobre el umbral',desv:'Aprobado con un nivel de dos'},
+    C3:{exc:'Proveedor inexistente en maestro',desv:'Proveedor con datos observados'},
+    C4:{exc:'Factura sin recepción o fuera de tolerancia',desv:'Diferencia dentro de tolerancia'},
+    C5:{exc:'Duplicado exacto o en ventana',desv:'Similitud parcial (fuzzy)'},
+    C6:{exc:'Anticipo sin OC ni recepción',desv:'Pago anticipado con respaldo'},
+    C7:{exc:'Inversión sin activo o presupuesto',desv:'Inversión sin activo o presupuesto'}};
+  const XADD={C4:'C5',C5:'C4',C6:'C1',C1:'C4',C2:'C4'};   // transversalidad ocasional
+  const mk=(cid,riesgo,mMin,mMax)=>{const monto=Math.round(mMin+rnd()*(mMax-mMin));
+    const controles=[cid];if(XADD[cid]&&rnd()<0.3)controles.push(XADD[cid]);
+    return {ctrl:cid,controles,riesgo,monto,desc:HALL[cid][riesgo==='CRITICO'?'exc':'desv'],lifnr:pick(PROV),fecha:fecha(),ebeln:mkdoc(cid),score:scoreOf(controles,riesgo,monto)};};
+  FOCUS_TX=[];
+  CTRLS.forEach((c,i)=>{const cid='C'+(i+1);
+    for(let k=0;k<CTRLMETA[i].exc;k++)FOCUS_TX.push(mk(cid,'CRITICO',5000,55000));   // excepciones: montos altos
+    for(let k=0;k<CTRLMETA[i].desv;k++)FOCUS_TX.push(mk(cid,'ADVERTENCIA',300,3000)); // desviaciones: montos bajos
+  });
+  FOCUS_TX.sort((a,b)=>b.score-a.score);
+  USD_TOTAL=FOCUS_TX.reduce((t2,t)=>t2+t.monto,0);
   CUM=[0];FOCUS_TX.forEach(t=>CUM.push(CUM[CUM.length-1]+t.monto));
+  USD_EXC=FOCUS_TX.filter(t=>t.riesgo==='CRITICO').reduce((t2,t)=>t2+t.monto,0);
+  USD_DESV=USD_TOTAL-USD_EXC;
+  USD_CTRL={};FOCUS_TX.forEach(t=>{USD_CTRL[t.ctrl]=(USD_CTRL[t.ctrl]||0)+t.monto;});
+  window.USD_EXC=USD_EXC;window.USD_DESV=USD_DESV;window.USD_TOTAL=USD_TOTAL;   // para la animación
+  STATE_TOT.exc.usd=USD_EXC;STATE_TOT.desv.usd=USD_DESV;   // cuadratura con exploración y desglose
 }
 function coverageAt(pct){
   const n=Math.max(1,Math.round(POB_TOTAL*pct/100));
@@ -1161,6 +1169,7 @@ function buildPreviewTable(headers,rows){
 }
 
 buildCtrlList('ctrl-summary',false);
+buildPoblacion();
 renderExplore();
 renderBreakdown();
 renderRiesgo();
@@ -1208,12 +1217,12 @@ new Chart(document.getElementById('donutChart'),{
   const STAGES=[
     {n:'Solicitud',t:'ME51N'},
     {n:'Liberación',t:'ME29N',ctrl:'C2'},
-    {n:'Orden de compra',t:'ME21N',ctrl:'C1'},
+    {n:'Orden de compra',t:'ME21N',ctrl:'C1 · C7'},
     {n:'Recepción',t:'MIGO',ctrl:'C3'},
     {n:'3-Way Match',t:'MIRO',ctrl:'C4'},
     {n:'Pago',t:'F110',ctrl:'C5/C6'}
   ];
-  const TARGET={conf:2080,desv:388,exc:132,total:2600,usdDesv:23300,usdExc:108900};
+  const TARGET={conf:2080,desv:388,exc:132,total:2600,usdDesv:window.USD_DESV||23300,usdExc:window.USD_EXC||108900};
   const DESV_AT=[1,2,3,4], EXC_AT=[1,3,4,5]; // estaciones donde se bifurcan
 
   let W,H,DPR,L={};
@@ -1253,7 +1262,7 @@ new Chart(document.getElementById('donutChart'),{
   function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
   function pick(a){return a[Math.floor(rnd()*a.length)];}
   function buildPlan(){
-    const pl=[]; const push=(cls,n)=>{let l=n;while(l>0){const q=Math.min(l,cls==='conf'?24:cls==='desv'?13:8);pl.push({cls,n:q});l-=q;}};
+    const pl=[]; const push=(cls,n)=>{let l=n;while(l>0){const q=Math.min(l,cls==='conf'?42:cls==='desv'?22:12);pl.push({cls,n:q});l-=q;}};
     push('conf',TARGET.conf);push('desv',TARGET.desv);push('exc',TARGET.exc);
     for(let i=pl.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[pl[i],pl[j]]=[pl[j],pl[i]];}
     return pl;
@@ -1278,7 +1287,7 @@ new Chart(document.getElementById('donutChart'),{
   function classify(t){counts[t.cls]+=t.share; const col= t.cls==='conf'?L.colConf:t.cls==='desv'?L.colDesv:L.colExc;
     pulseArr.push({x:col.x,y:col.y,c:stCol(t.cls),t:0});}
   function update(dt,now){
-    if(pIdx<plan.length&&now>=nextEmit){emit();nextEmit=now+0.16;}
+    if(pIdx<plan.length&&now>=nextEmit){emit();if(pIdx<plan.length)emit();nextEmit=now+0.09;}
     for(const t of tokens){
       if(t.done)continue;
       t.d+=SPEED*dt;
@@ -1291,7 +1300,11 @@ new Chart(document.getElementById('donutChart'),{
     const prog=Math.min(1,(shown.conf+shown.desv+shown.exc)/TARGET.total);
     usd.desv=TARGET.usdDesv*prog;usd.exc=TARGET.usdExc*prog;
     pulseArr.forEach(p=>p.t+=dt*2.5);pulseArr=pulseArr.filter(p=>p.t<1);
-    if(!finished&&pIdx>=plan.length&&tokens.length===0&&Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)<3)finished=true;
+    if(!finished&&pIdx>=plan.length&&tokens.length===0&&Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)<3){
+      finished=true;
+      shown={conf:TARGET.conf,desv:TARGET.desv,exc:TARGET.exc};   // snap exacto: evita 2.079 / 2.599
+      usd.desv=TARGET.usdDesv;usd.exc=TARGET.usdExc;
+    }
   }
   function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 
