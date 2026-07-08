@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard P2P · Entidad Evaluada · AuditCaat's</title>
+<title>Dashboard P2P · AuditCaat's</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -124,6 +124,142 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
   .topbar{background:#fff;border-bottom:2px solid #1e6fd9;padding:8px 16px}
   .logo-ac{filter:none}
 }
+/* ===== Vista Reproducción + Patrones (integración) ===== */
+.repro-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.repro-stage{position:relative;width:100%;max-width:940px;border-radius:12px;overflow:hidden;background:#081221;border:1px solid var(--border)}
+.repro-stage canvas{display:block;width:100%}
+.repro-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.repro-btn{font-size:12px;font-weight:600;color:#04121f;background:var(--accent2);border:0;padding:10px 18px;border-radius:8px;cursor:pointer}
+.repro-btn:hover{background:#4aa0ff}
+.repro-btn.ghost{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.repro-btn.ghost:hover{border-color:var(--accent)}
+.pat-toggle{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#04121f;background:var(--accent2);border:0;padding:7px 14px;border-radius:6px;cursor:pointer;margin:6px 0 2px}
+.pat-toggle:hover{background:#4aa0ff}
+.pat-wrap{margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.pat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pat-tab{font-size:11px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:6px 12px;border-radius:6px;cursor:pointer}
+.pat-tab.on{background:var(--accent2);color:#04121f;font-weight:700;border-color:var(--accent2)}
+.pat-insight{background:rgba(42,143,255,.08);border:1px solid rgba(42,143,255,.25);border-radius:7px;padding:9px 12px;font-size:11.5px;line-height:1.5;margin-bottom:12px}
+.pat-insight b{color:var(--accent2)}
+.pbar-row{display:grid;grid-template-columns:120px 1fr 96px;align-items:center;gap:10px;margin-bottom:6px;font-size:11px}
+.pbar-k{font-family:monospace;color:var(--text)}
+.pbar-track{height:18px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:4px}
+.pbar-v{font-family:monospace;color:var(--muted);text-align:right}
+.pmx{border-collapse:collapse;font-size:11px;width:100%}
+.pmx th,.pmx td{padding:5px 6px;text-align:center;font-family:monospace;border-bottom:1px solid rgba(255,255,255,.05)}
+.pmx th{color:var(--muted);font-size:9px}
+.pmx td.prov{text-align:left;color:var(--text)}
+.pmx .hit{width:15px;height:15px;border-radius:4px;display:inline-block}
+.ptl{position:relative;margin:22px 0 4px}
+.ptl-axis{height:2px;background:var(--border);position:relative}
+.ptl-pt{position:absolute;top:-5px;border-radius:50%;transform:translateX(-50%);border:2px solid #0a1628}
+.ptl-lab{display:flex;justify-content:space-between;font-family:monospace;font-size:9px;color:var(--muted);margin-top:8px}
+/* ===== Exploración premium ===== */
+.ex-states{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.ex-state{background:var(--bg2);border:1px solid var(--border);border-top-width:3px;border-radius:8px;padding:11px 14px;cursor:pointer;transition:.15s}
+.ex-state:hover{background:var(--bg3)}
+.ex-state.on{background:var(--bg3);box-shadow:0 0 0 1px currentColor inset}
+.ex-state .lab{font-size:12px;font-weight:700;letter-spacing:.02em}
+.ex-state .num{font-size:26px;font-weight:800;color:var(--text);line-height:1.15;margin:2px 0}
+.ex-state .sub{font-size:11px;font-family:monospace}
+.exs-conf{color:var(--ok);border-top-color:var(--ok)}
+.exs-desv{color:var(--warn);border-top-color:var(--warn)}
+.exs-exc{color:var(--crit);border-top-color:var(--crit)}
+.ex-crumb{font-size:11px;color:var(--muted);font-family:monospace;margin-bottom:12px}
+.ex-crumb .cl{cursor:pointer}
+.ex-crumb .cl:hover{color:var(--accent2)}
+.ex-crumb b{color:var(--text)}
+.exgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.exg-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 13px;cursor:pointer;transition:.15s;position:relative}
+.exg-card:hover{border-color:var(--accent);background:var(--bg3)}
+.exg-card .cid{font-family:monospace;font-weight:700;font-size:12px;color:var(--accent2)}
+.exg-card .cnm{font-weight:700;font-size:15px;margin:2px 0 3px}
+.exg-card .cob{font-size:11px;color:var(--muted);line-height:1.35;min-height:30px}
+.exg-card .cft{display:flex;align-items:baseline;justify-content:space-between;margin-top:9px}
+.exg-card .cct{font-weight:800;font-size:24px}
+.exg-card .cus{font-family:monospace;font-size:11px;color:var(--muted)}
+.exg-card .cbr{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:8px;overflow:hidden}
+.exg-card .cbr i{display:block;height:100%;border-radius:2px}
+.exg-card .cst{position:absolute;top:12px;right:13px;font-family:monospace;font-size:10px;color:var(--muted)}
+.ex-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 6px;flex-wrap:wrap}
+.ex-ttl{font-weight:700;font-size:15px}
+.exscore{font-weight:800;padding:2px 8px;border-radius:6px;font-size:12px;font-family:monospace}
+.chipc{display:inline-block;font-family:monospace;font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);margin-left:2px;color:var(--muted)}
+.ex-info{font-size:12px;color:var(--muted);margin:2px 0 12px;line-height:1.5}
+.ex-note{background:var(--bg3);border-radius:8px;padding:16px;font-size:12px;color:var(--muted);line-height:1.6}
+/* desglose bajo el recorrido */
+.repro-breakdown{width:100%;max-width:940px;margin-top:10px}
+.bd-intro{font-size:12px;color:var(--muted);text-align:center;margin-bottom:10px}
+.bd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.bd-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.bd-hdr{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:13px;margin-bottom:6px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.bd-tot{font-family:monospace;font-size:11px;font-weight:600}
+.bd-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:8px;padding:7px 6px;border-radius:6px;cursor:pointer;transition:.12s}
+.bd-row:hover{background:var(--bg3)}
+.bd-cid{font-family:monospace;font-weight:700;font-size:12px}
+.bd-why{font-size:11.5px;color:var(--text);line-height:1.3}
+.bd-why small{color:var(--muted);font-size:10.5px}
+.bd-n{font-family:monospace;font-weight:700;font-size:14px}
+.bd-go{font-size:10px;color:var(--muted);text-align:right;margin-top:6px}
+/* modal desglose de score (2 etapas) */
+.scd-modal{position:fixed;inset:0;background:rgba(4,10,20,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.scd-modal.open{display:flex}
+.scd-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:540px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.scd-top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;color:var(--accent2)}
+.scd-top button{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;line-height:1}
+.scd-top button:hover{color:var(--text)}
+.scd-body{padding:16px 18px}
+.scd-sub2{font-size:12px;color:var(--muted);margin-bottom:14px;font-family:monospace}
+.scd-sec{margin-bottom:16px}
+.scd-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text);margin-bottom:9px}
+.binrow{display:flex;gap:6px;flex-wrap:wrap}
+.binchip{display:inline-flex;align-items:center;gap:4px;font-family:monospace;font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);color:var(--muted);background:var(--bg3)}
+.binchip b{font-size:11px;color:var(--ok)}
+.binchip.on{border-color:var(--crit);color:var(--text);background:rgba(239,68,68,.12)}
+.binchip.on b{color:var(--crit)}
+.scd-note{font-size:11px;color:var(--muted);margin-top:8px}
+.scd-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.scd-row small{color:var(--muted)}
+.scd-w{font-family:monospace;color:var(--muted)}
+.scd-subtot{font-weight:700;border-top:1px solid var(--border);border-bottom:none;margin-top:2px;padding-top:8px}
+.scd-subtot .scd-w{color:var(--text)}
+.scd-final{font-weight:800;font-size:15px;border-bottom:none;margin-top:6px;padding-top:8px;border-top:2px solid var(--border)}
+.scd-final .scd-w,.scd-final span:last-child{font-family:system-ui}
+.scd-formula{font-family:monospace;font-size:10.5px;color:var(--muted);background:var(--bg3);border-radius:7px;padding:9px 11px;margin-top:6px;line-height:1.5}
+.scd-cta{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:10px}
+/* mapa de riesgo interactivo */
+.rk-bars{display:flex;flex-direction:column;gap:9px}
+.rk-row{display:grid;grid-template-columns:58px 1fr 62px;align-items:center;gap:10px;cursor:pointer;padding:2px 4px;border-radius:6px;transition:background .12s}
+.rk-row:hover{background:var(--bg3)}
+.rk-row:hover .rk-fill{filter:brightness(1.18)}
+.rk-k{font-family:monospace;font-size:11px;color:var(--text)}
+.rk-track{height:16px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.rk-fill{height:100%;border-radius:4px;transition:width .8s}
+.rk-v{font-family:monospace;font-size:10px;color:var(--muted);text-align:right}
+.rk-tip{position:fixed;display:none;z-index:60;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:11px;line-height:1.55;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.45);pointer-events:none;max-width:250px}
+.rk-tip b{color:var(--accent2)}
+/* focos de atención */
+.foco-intro{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;max-width:920px}
+.foco-slider{margin-top:12px}
+.foco-slider input[type=range]{width:100%;accent-color:var(--accent2);cursor:pointer}
+.foco-big{margin-bottom:16px}
+.foco-big-n{font-size:32px;font-weight:800;color:var(--text);line-height:1.05}
+.foco-big-l{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.foco-cmp{font-size:12px;color:var(--text);background:var(--bg3);border-radius:8px;padding:11px 13px;line-height:1.55;margin-top:4px}
+.foco-calc{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+.fc-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text);margin-bottom:8px}
+.fc-vars{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.fc-vars span{font-size:11px;color:var(--muted);background:var(--bg3);border-radius:6px;padding:4px 9px}
+.fc-vars b{color:var(--accent2);font-family:monospace}
+.fc-formula{font-family:monospace;font-size:10.5px;color:var(--muted);background:var(--bg3);border-radius:7px;padding:9px 11px;line-height:1.65}
+.fc-formula b{color:var(--text)}
+.fc-ex{font-size:11px;color:var(--text);background:rgba(42,143,255,.07);border-left:2px solid var(--accent2);border-radius:4px;padding:8px 10px;margin-top:8px;line-height:1.55}
+.fc-ex b{color:var(--accent2)}
+.foco-tabla-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.foco-tabla-wrap{max-height:420px;overflow:auto;border:1px solid var(--border);border-radius:6px}
+.foco-tabla-wrap table{width:100%}
+.foco-tabla-wrap thead th{position:sticky;top:0;background:var(--bg2);z-index:1}
 </style>
 </head>
 <body>
@@ -133,19 +269,33 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     </div>
   <div class="topbar-right">
     <span class="badge-live">EN VIVO</span>
-    <span class="period">Entidad Evaluada &nbsp;·&nbsp; SAP S/4HANA 2020 &nbsp;·&nbsp; Universo 2025</span>
+    <span class="period">SAP S/4HANA 2020 &nbsp;·&nbsp; Universo 2025</span>
     <button class="print-btn" onclick="window.print()">Imprimir reporte</button>
   </div>
 </div>
 <div class="nav">
-  <button class="nav-btn active" onclick="showView('resumen',this)">Resumen ejecutivo</button>
+  <button class="nav-btn active" onclick="showView('reproduccion',this)">▶ Reproducción</button>
+  <button class="nav-btn" onclick="showView('resumen',this)">Resumen ejecutivo</button>
   <button class="nav-btn" onclick="showView('controles',this)">7 Controles P2P</button>
+  <button class="nav-btn" onclick="showView('focos',this)">Focos de atención</button>
   <button class="nav-btn" onclick="showView('seguimiento',this)">Seguimiento de issues</button>
   <button class="nav-btn" onclick="showView('riesgo',this)">Mapa de riesgo</button>
   <button class="nav-btn" onclick="showView('carga',this)">Carga Arbutus</button>
 </div>
 
-<div id="view-resumen" class="view active">
+<div id="view-reproduccion" class="view active">
+  <div class="repro-wrap">
+    <div style="font-size:12px;color:var(--muted);text-align:center;max-width:560px;line-height:1.6">Recorrido del ciclo Procure-to-Pay. Cada documento se clasifica en <span style="color:var(--ok)">conforme</span>, <span style="color:var(--warn)">desviación gestionada</span> o <span style="color:var(--crit)">excepción</span>. Al terminar, explora los 7 controles y documenta cada transacción.</div>
+    <div class="repro-stage"><canvas id="reproCanvas"></canvas></div>
+    <div class="repro-actions">
+      <button class="repro-btn ghost" id="reproReplay">Reproducir de nuevo</button>
+      <button class="repro-btn" id="reproExplore">Explorar los 7 controles →</button>
+    </div>
+    <div id="repro-breakdown" class="repro-breakdown"></div>
+  </div>
+</div>
+
+<div id="view-resumen" class="view">
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-label">Requisiciones analizadas</div><div class="kpi-val ok">28.433</div><div class="kpi-sub">Universo completo Portal</div><div class="kpi-bar"><div class="kpi-fill" style="width:100%;background:var(--ok)"></div></div></div>
     <div class="kpi"><div class="kpi-label">PO sin requisicion</div><div class="kpi-val warn">4.2%</div><div class="kpi-sub">109 de 2.600 ordenes</div><div class="kpi-bar"><div class="kpi-fill" style="width:42%;background:var(--warn)"></div></div></div>
@@ -192,16 +342,31 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 </div>
 
 <div id="view-controles" class="view">
-  <div id="drilldown-panel" class="drilldown">
-    <div class="drilldown-hdr">
-      <span class="drilldown-title" id="dd-title"></span>
-      <button class="close-btn" onclick="closeDrill()">×</button>
+  <div class="ex-states" id="ex-states"></div>
+  <div class="ex-crumb" id="ex-crumb"></div>
+  <div id="ex-body"></div>
+</div>
+
+<div id="view-focos" class="view">
+  <div class="foco-intro">De la población completa a los focos de atención. Cada transacción recibe un score de riesgo; al ordenar el universo por ese puntaje y revisar primero las de mayor score, se cubre la mayor parte del riesgo con una fracción del esfuerzo. Mueve el control para seleccionar tu muestra y descárgala.</div>
+  <div class="row2">
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title">Curva de cobertura de riesgo</span></div>
+      <div id="foco-curva"></div>
+      <div class="foco-slider">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px"><span>Esfuerzo de revisión: <b id="foco-pct" style="color:var(--accent2)">5%</b> de la población</span><span id="foco-scoremin"></span></div>
+        <input type="range" id="foco-range" min="1" max="100" value="5" oninput="updateFoco(this.value)">
+      </div>
+      <div id="foco-calc" class="foco-calc"></div>
     </div>
-    <div id="dd-content"></div>
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-title">Con ese esfuerzo</span></div>
+      <div id="foco-metrics"></div>
+    </div>
   </div>
-  <div class="panel">
-    <div class="panel-hdr"><span class="panel-title">Haz clic en un control para ver excepciones y calificar el riesgo por evidencia</span></div>
-    <div class="ctrl-list" id="ctrl-full"></div>
+  <div class="panel" style="margin-top:10px">
+    <div class="panel-hdr foco-tabla-hdr"><span class="panel-title">Muestra seleccionada <span id="foco-muestra-n" style="color:var(--muted);font-weight:400"></span></span><button class="print-btn" onclick="exportMuestra()">Descargar muestra (Excel)</button></div>
+    <div id="foco-tabla"></div>
   </div>
 </div>
 
@@ -241,23 +406,27 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 <div id="view-riesgo" class="view">
   <div class="row2">
     <div class="panel">
-      <div class="panel-hdr"><span class="panel-title">Nivel de riesgo acumulado por dimension (0–100)</span></div>
-      <div class="risk-meter" id="risk-meter"></div>
+      <div class="panel-hdr"><span class="panel-title">Exposición por control · USD en riesgo</span></div>
+      <div id="riesgo-controles" class="rk-bars"></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:10px">Pasa el cursor para ver el detalle · clic en un control para ir a sus transacciones</div>
     </div>
     <div class="panel">
-      <div class="panel-hdr"><span class="panel-title">Top 5 proveedores con mayor exposicion</span></div>
-      <div style="position:relative;height:210px"><canvas id="provChart" role="img" aria-label="Proveedores riesgo">Proveedores.</canvas></div>
-      <div class="leg-row">
-        <span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>Excepciones</span>
-        <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>Monto USD K</span>
+      <div class="panel-hdr"><span class="panel-title">Top proveedores por exposición</span></div>
+      <div id="riesgo-prov" class="rk-bars"></div>
+      <div class="leg-row" style="margin-top:10px">
+        <span class="leg-item"><span class="leg-dot" style="background:#ef4444"></span>3+ controles</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#f59e0b"></span>2 controles</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#2a8fff"></span>1 control</span>
       </div>
     </div>
   </div>
   <div class="panel" style="margin-top:10px">
-    <div class="panel-hdr"><span class="panel-title">Matriz de riesgo: frecuencia vs impacto financiero</span></div>
-    <div style="position:relative;height:230px"><canvas id="bubbleChart" role="img" aria-label="Matriz riesgo">Matriz.</canvas></div>
+    <div class="panel-hdr"><span class="panel-title">Matriz de riesgo · frecuencia vs impacto (tamaño = score máximo)</span></div>
+    <div id="riesgo-matriz"></div>
+    <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:4px">Cantidad de excepciones →&nbsp;&nbsp;·&nbsp;&nbsp;clic en una burbuja para ir al control</div>
   </div>
 </div>
+<div id="rk-tip" class="rk-tip"></div>
 
 <div id="view-carga" class="view">
   <div class="row2">
@@ -289,7 +458,13 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
   </div>
 </div>
 
-<div class="watermark">AuditCaat's Data Assurance &nbsp;·&nbsp; Arbutus Powerful Analytics Simplified &nbsp;·&nbsp; Dashboard P2P — Entidad Evaluada &nbsp;·&nbsp; Datos ilustrativos para demostracion</div>
+<div class="watermark">AuditCaat's Data Assurance &nbsp;·&nbsp; Arbutus Powerful Analytics Simplified &nbsp;·&nbsp; Datos ilustrativos para demostracion</div>
+<div id="score-modal" class="scd-modal" onclick="if(event.target===this)closeScoreModal()">
+  <div class="scd-card">
+    <div class="scd-top"><span>Risk scoring transaccional · modelo de 2 etapas</span><button onclick="closeScoreModal()">✕</button></div>
+    <div class="scd-body"></div>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const CTRLS=[
@@ -331,6 +506,48 @@ const COLOR_RIESGO={Alto:'#ef4444',Medio:'#f59e0b',Bajo:'#22c55e',Nulo:'#64748b'
 const uploadedFiles=[];
 let issues=JSON.parse(localStorage.getItem('p2p_issues')||'[]');
 
+/* ===== Ampliación de datos: más transacciones por control con patrones plantados ===== */
+const PROVW=['100234','100234','100234','100512','100512','100512','100891','100891','100781','101044','100345','101200','100023','999001','100678','101300'];
+const FECHAS_BASE=['2025-01','2025-02','2025-03','2025-04','2025-05','2025-06'];
+const CL5_DATES=['2025-03-11','2025-03-12','2025-03-13','2025-05-06','2025-05-07'];
+function _seed(s){return function(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};}
+const _r=_seed(730451);
+const _pick=a=>a[Math.floor(_r()*a.length)];
+const _rng=(a,b)=>a+Math.floor(_r()*(b-a));
+const _fmt=n=>Math.round(n).toLocaleString('es-EC');
+function parseMonto(m){return parseFloat(String(m).replace(/\./g,'').replace(',','.'))||0;}
+const MONTO_RANGE={0:[1000,9000],1:[4000,20000],2:[1000,6000],3:[800,12000],4:[3000,15000],5:[3000,20000],6:[20000,55000]};
+const DOC_PREFIX={0:'oc',1:'oc',2:'oc',3:'oc',4:'re',5:'zp',6:'a'};
+function _mkdoc(ci){const p=DOC_PREFIX[ci];
+  if(p==='oc')return '4500'+String(_rng(11000,12999)).padStart(6,'0').slice(0,6);
+  if(p==='re')return 'RE 5000'+String(_rng(34000,35999)).padStart(6,'0').slice(0,6);
+  if(p==='zp')return 'ZP 2000'+String(_rng(1000,1999)).padStart(6,'0').slice(0,6);
+  return 'A-100-2025-'+String(_rng(1,60)).padStart(3,'0');}
+function _riesgo(ci,monto,prov){const L=CTRLS[ci].level;
+  if(L==='crit')return _r()<0.82?'CRITICO':'ADVERTENCIA';
+  if(ci===2)return prov.startsWith('999')?'CRITICO':'ADVERTENCIA';
+  if(ci===6)return 'ADVERTENCIA';
+  return (monto>12000||_r()<0.3)?'CRITICO':'ADVERTENCIA';}
+const MOTS={0:['PO sin PR vinculada','BANFN vacío en EKPO','Requisición no encontrada'],
+ 1:['Aprobación nivel 1 faltante','Un nivel aprobado de dos','Monto sobre umbral sin liberar'],
+ 2:['Proveedor no existe en LFA1','SPERR=X en LFB1','Datos bancarios inconsistentes'],
+ 3:['Factura sin recepción','Diferencia cantidad sobre tolerancia','Diferencia precio unitario','Recepción posterior a factura'],
+ 4:['Duplicado exacto mismo día','Duplicado ventana +3 días','Variación 0.5% fuzzy','Mismo XBLNR y WRBTR'],
+ 5:['Anticipo sin EBELN','Pago antes de recepción','Fuera de ZTERM'],
+ 6:['Orden inversión sin activo ANLA','Sin presupuesto BPJA']};
+CTRLS.forEach((c,ci)=>{
+  c.rows.forEach(r=>{ if(!r.fecha) r.fecha = ci===4? _pick(CL5_DATES) : (_pick(FECHAS_BASE)+'-'+String(_rng(1,28)).padStart(2,'0'));
+    if(!r.controles) r.controles=['C'+(ci+1)]; });
+  for(let k=c.rows.length;k<14;k++){
+    const prov=_pick(PROVW), [a,b]=MONTO_RANGE[ci], monto=_rng(a,b);
+    const fecha = ci===4 ? _pick(CL5_DATES) : (_pick(FECHAS_BASE)+'-'+String(_rng(1,28)).padStart(2,'0'));
+    c.rows.push({ebeln:_mkdoc(ci),lifnr:prov,monto:_fmt(monto),riesgo:_riesgo(ci,monto,prov),desc:_pick(MOTS[ci]),fecha,controles:['C'+(ci+1)]});
+  }
+});
+const XMAP={'100512':['C2','C4','C5'],'100891':['C1','C6'],'100234':['C5','C4','C1']};
+CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{ const ex=XMAP[r.lifnr];
+  if(ex&&_r()<0.35){ const add=_pick(ex.filter(x=>x!=='C'+(ci+1))); if(add&&!r.controles.includes(add))r.controles.push(add); } }));
+
 function saveIssues(){localStorage.setItem('p2p_issues',JSON.stringify(issues));}
 
 function buildCtrlList(cid,withDrill){
@@ -345,8 +562,9 @@ function buildCtrlList(cid,withDrill){
 }
 
 function navCtrl(i){
-  showView('controles',document.querySelectorAll('.nav-btn')[1]);
-  setTimeout(()=>openDrill(i),60);
+  showView('controles',document.querySelectorAll('.nav-btn')[2]);
+  EX.estado=CTRLMETA[i].exc>0?'exc':'desv';EX.ctrl=i;EX.level='txns';
+  setTimeout(renderExplore,50);
 }
 
 function openDrill(i){
@@ -387,6 +605,7 @@ function openDrill(i){
   });
   html+=`</tbody></table>`;
   if(c.rows.length<c.exc) html+=`<div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:center;padding:6px;background:var(--bg3);border-radius:5px">Mostrando ${c.rows.length} de ${c.exc.toLocaleString()} excepciones. Carga el TXT completo de Arbutus en la pestana <strong style="color:var(--accent2)">Carga Arbutus</strong> para ver el universo completo.</div>`;
+  html+=`<button class="pat-toggle" onclick="togglePatterns(${i})">Analizar patrones de este control</button><div id="pat-panel-${i}" class="pat-wrap" style="display:none"></div>`;
   document.getElementById('dd-content').innerHTML=html;
   dd.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -441,6 +660,403 @@ function exportCSV(){
   a.download='seguimiento_p2p_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
+let patState={};
+function togglePatterns(i){
+  const p=document.getElementById('pat-panel-'+i);
+  if(!p)return;
+  if(p.style.display==='none'){p.style.display='block';patState[i]=patState[i]||'prov';renderPatterns(i);}
+  else p.style.display='none';
+}
+function setPatTab(i,t){patState[i]=t;renderPatterns(i);}
+function renderPatterns(i){
+  const c=CTRLS[i], tab=patState[i]||'prov', rows=c.rows;
+  const tabs=[['prov','Concentración por proveedor'],['time','Ventana temporal'],['monto','Monto / materialidad'],['multi','Proveedor en varios controles']];
+  document.getElementById('pat-panel-'+i).innerHTML=`<div class="pat-tabs">`+
+    tabs.map(t=>`<button class="pat-tab ${tab===t[0]?'on':''}" onclick="setPatTab(${i},'${t[0]}')">${t[1]}</button>`).join('')+
+    `</div><div id="pat-body-${i}"></div>`;
+  const body=document.getElementById('pat-body-'+i);
+  const col=c.level==='crit'?'#ef4444':c.level==='warn'?'#f59e0b':'#22c55e';
+  if(tab==='prov')body.innerHTML=patProv(rows,col);
+  else if(tab==='time')body.innerHTML=patTime(rows,col,i);
+  else if(tab==='monto')body.innerHTML=patMonto(rows,col);
+  else body.innerHTML=patMulti(col);
+}
+function patProv(rows,col){
+  const g={}; rows.forEach(r=>{const u=parseMonto(r.monto);(g[r.lifnr]=g[r.lifnr]||{n:0,usd:0});g[r.lifnr].n++;g[r.lifnr].usd+=u;});
+  const arr=Object.entries(g).map(([p,v])=>({p,...v})).sort((a,b)=>b.usd-a.usd);
+  const tot=arr.reduce((s,x)=>s+x.usd,0)||1, max=arr[0]?arr[0].usd:1; let h='';
+  if(arr[0])h+=`<div class="pat-insight">El proveedor <b>${arr[0].p}</b> concentra <b>${arr[0].n}</b> hallazgos por <b>USD ${_fmt(arr[0].usd)}</b> — el <b>${Math.round(arr[0].usd/tot*100)}%</b> del monto de este control.</div>`;
+  arr.slice(0,7).forEach(x=>h+=`<div class="pbar-row"><div class="pbar-k">${x.p}</div><div class="pbar-track"><div class="pbar-fill" style="width:${Math.round(x.usd/max*100)}%;background:${col}"></div></div><div class="pbar-v">USD ${_fmt(x.usd)} · ${x.n}</div></div>`);
+  return h;
+}
+function patTime(rows,col,i){
+  const ds=rows.map(r=>r.fecha).filter(Boolean).sort();
+  const cnt={}; ds.forEach(d=>cnt[d]=(cnt[d]||0)+1);
+  const cl=Object.entries(cnt).filter(([d,n])=>n>=2).sort((a,b)=>b[1]-a[1]); let h='';
+  if(cl.length)h+=`<div class="pat-insight"><b>${cl[0][1]}</b> documentos caen el mismo día (<b>${cl[0][0]}</b>) — patrón temporal compatible con ${i===5?'anticipos recurrentes':'duplicación en ventana'}. Revisar como grupo.</div>`;
+  else h+=`<div class="pat-insight">Sin concentración temporal marcada en esta muestra.</div>`;
+  const min=new Date(ds[0]||'2025-01-01'),max=new Date(ds[ds.length-1]||'2025-06-30'),span=Math.max(1,max-min);
+  h+=`<div class="ptl"><div class="ptl-axis">`;
+  Object.entries(cnt).forEach(([d,n])=>{const x=((new Date(d)-min)/span)*100,sz=8+n*3;
+    h+=`<div class="ptl-pt" title="${d} · ${n}" style="left:${x}%;width:${sz}px;height:${sz}px;background:${n>=2?'#ef4444':col}"></div>`;});
+  h+=`</div><div class="ptl-lab"><span>${ds[0]||''}</span><span>${ds[ds.length-1]||''}</span></div></div>`;
+  return h;
+}
+function patMonto(rows,col){
+  const bands=[['&lt; 1.000',0,1000],['1.000–5.000',1000,5000],['5.000–10.000',5000,10000],['10.000–25.000',10000,25000],['&gt; 25.000',25000,1e9]];
+  const data=bands.map(([lab,a,b])=>{const it=rows.filter(r=>{const m=parseMonto(r.monto);return m>=a&&m<b;});return{lab,n:it.length,usd:it.reduce((s,r)=>s+parseMonto(r.monto),0)};});
+  const tot=data.reduce((s,d)=>s+d.usd,0)||1,max=Math.max(1,...data.map(d=>d.usd));
+  const heavy=data.slice().sort((a,b)=>b.usd-a.usd)[0]; let h='';
+  if(heavy&&heavy.n)h+=`<div class="pat-insight">La banda <b>${heavy.lab.replace('&lt;','<').replace('&gt;','>')}</b> concentra <b>USD ${_fmt(heavy.usd)}</b> (<b>${Math.round(heavy.usd/tot*100)}%</b> del riesgo) en <b>${heavy.n}</b> documentos — foco de materialidad.</div>`;
+  data.forEach(d=>h+=`<div class="pbar-row"><div class="pbar-k">${d.lab}</div><div class="pbar-track"><div class="pbar-fill" style="width:${Math.round(d.usd/max*100)}%;background:${col}"></div></div><div class="pbar-v">USD ${_fmt(d.usd)} · ${d.n}</div></div>`);
+  return h;
+}
+function patMulti(col){
+  const g={}; CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{(g[r.lifnr]=g[r.lifnr]||new Set());(r.controles||['C'+(ci+1)]).forEach(x=>g[r.lifnr].add(x));}));
+  const multi=Object.entries(g).map(([p,s])=>({p,ctrls:[...s].sort()})).filter(x=>x.ctrls.length>=2).sort((a,b)=>b.ctrls.length-a.ctrls.length);
+  let h='';
+  if(multi.length)h+=`<div class="pat-insight"><b>${multi.length}</b> proveedores incumplen 2 o más controles distintos. <b>${multi[0].p}</b> aparece en <b>${multi[0].ctrls.join(' · ')}</b> — riesgo transversal, máxima prioridad.</div>`;
+  else h+=`<div class="pat-insight">Sin proveedores transversales en la muestra.</div>`;
+  const O=['C1','C2','C3','C4','C5','C6','C7'];
+  h+=`<table class="pmx"><thead><tr><th class="prov" style="text-align:left">Proveedor</th>`+O.map(c=>`<th>${c}</th>`).join('')+`<th># ctrl</th></tr></thead><tbody>`;
+  multi.slice(0,10).forEach(m=>h+=`<tr><td class="prov">${m.p}</td>`+O.map(c=>`<td>${m.ctrls.includes(c)?`<span class="hit" style="background:${col}"></span>`:'<span style="color:#33465c">·</span>'}</td>`).join('')+`<td style="color:${col};font-weight:700">${m.ctrls.length}</td></tr>`);
+  h+=`</tbody></table>`;
+  return h;
+}
+
+/* ===== Motor de exploración premium ===== */
+const CTRLMETA={
+ 0:{obj:'Toda compra nace de una requisición autorizada',etapa:'Requisición → OC',tablas:'EKKO · EKPO · Portal',exc:3,desv:70},
+ 1:{obj:'Toda OC cumple sus niveles de aprobación por monto',etapa:'Liberación',tablas:'Portal · EKKO',exc:8,desv:40},
+ 2:{obj:'Solo se opera con proveedores activos y válidos',etapa:'OC / Pago',tablas:'LFA1 · LFB1 · BSEG',exc:5,desv:12},
+ 3:{obj:'Factura conciliada con OC y recepción, en tolerancia',etapa:'Factura',tablas:'EKPO · MSEG · RSEG',exc:62,desv:180},
+ 4:{obj:'No pagar dos veces la misma obligación',etapa:'Factura / Pago',tablas:'RBKP · BKPF · BSEG',exc:24,desv:6},
+ 5:{obj:'Anticipos con OC/recepción y términos válidos',etapa:'Pago',tablas:'BKPF · BSEG · EKKO',exc:30,desv:60},
+ 6:{obj:'Coherencia orden – activo – presupuesto',etapa:'OC',tablas:'AUFK · ANLA · BPJA',exc:0,desv:20}
+};
+const STATE_TOT={conf:{n:2080,usd:0},desv:{n:388,usd:23300},exc:{n:132,usd:108900},total:2600};
+const R2S={CRITICO:'exc',ADVERTENCIA:'desv',NORMAL:'conf'};
+const _cidx={'C1':0,'C2':1,'C3':2,'C4':3,'C5':4,'C6':5,'C7':6};
+const sevC=c=>{const idx=_cidx[c];if(idx==null)return 1;const L=CTRLS[idx].level;return L==='crit'?3:L==='warn'?2:1;};
+/* Modelo de risk scoring transaccional de dos etapas (ISACA)
+   Etapa 1: evaluación binaria de los 7 controles (incumple / cumple)
+   Etapa 2: ponderación por severidad del control, del hallazgo y materialidad */
+const PESO_NIVEL={crit:30,warn:20,mixed:15,ok:10};
+function ctrlLevel(cCode){const i=_cidx[cCode];return i==null?'ok':CTRLS[i].level;}
+function ctrlName(cCode){const i=_cidx[cCode];return i==null?cCode:CTRLS[i].name.replace(/^C\d+\s·\s/,'');}
+function scoreDetail(r){
+  const inc=(r.controles||[]);                                   // Etapa 1: vector binario (controles incumplidos)
+  const pesos=inc.map(c=>({c,lvl:ctrlLevel(c),w:PESO_NIVEL[ctrlLevel(c)]||10}));
+  const base=pesos.reduce((s,x)=>s+x.w,0);                       // Etapa 2: subtotal por controles
+  const sevMult=r.riesgo==='CRITICO'?1.0:r.riesgo==='ADVERTENCIA'?0.7:0.4;
+  const materialidad=Math.min(25,Math.round(parseMonto(r.monto)/1000));
+  const bruto=base*sevMult+materialidad;
+  const score=Math.max(1,Math.min(100,Math.round(bruto)));
+  return {score,inc,pesos,base,sevMult,materialidad};
+}
+function scoreRow(r){return scoreDetail(r).score;}
+function scoreCol(s){return s>=55?'var(--crit)':s>=35?'var(--warn)':'var(--ok)';}
+function showScoreDetail(i,ri){
+  const c=CTRLS[i],r=c.rows[ri],d=scoreDetail(r),O=['C1','C2','C3','C4','C5','C6','C7'];
+  const bin=O.map(cc=>{const on=d.inc.includes(cc);return `<span class="binchip ${on?'on':''}">${cc}<b>${on?'✗':'✓'}</b></span>`;}).join('');
+  const pesos=d.pesos.slice().sort((a,b)=>b.w-a.w).map(x=>`<div class="scd-row"><span>C${_cidx[x.c]+1} · ${ctrlName(x.c)} <small>(${x.lvl==='crit'?'crítico':x.lvl==='warn'?'advertencia':'básico'})</small></span><span class="scd-w">peso ${x.w}</span></div>`).join('');
+  const m=document.getElementById('score-modal');
+  m.querySelector('.scd-body').innerHTML=`
+    <div class="scd-sub2">Documento <b>${r.ebeln}</b> · Proveedor ${r.lifnr} · <b>USD ${r.monto}</b> · ${r.fecha||''}</div>
+    <div class="scd-sec"><div class="scd-t">Etapa 1 · Evaluación binaria de los 7 controles</div>
+      <div class="binrow">${bin}</div>
+      <div class="scd-note">Incumple <b>${d.inc.length}</b> de 7 controles &nbsp;·&nbsp; ✗ incumple, ✓ cumple</div></div>
+    <div class="scd-sec"><div class="scd-t">Etapa 2 · Ponderación</div>
+      ${pesos}
+      <div class="scd-row scd-subtot"><span>Subtotal por controles incumplidos</span><span class="scd-w">${d.base}</span></div>
+      <div class="scd-row"><span>Severidad del hallazgo · ${r.riesgo}</span><span class="scd-w">× ${d.sevMult.toFixed(1)}</span></div>
+      <div class="scd-row"><span>Materialidad · monto de la transacción</span><span class="scd-w">+ ${d.materialidad}</span></div>
+      <div class="scd-row scd-final"><span>SCORE DE RIESGO</span><span style="color:${scoreCol(d.score)}">${d.score} / 100</span></div></div>
+    <div class="scd-formula">Score = ( Σ pesos de controles incumplidos × severidad del hallazgo ) + materialidad &nbsp;·&nbsp; acotado a 100</div>
+    <div class="scd-cta">Este puntaje ordena la población: el auditor atiende primero los mayores. La evidencia y los controles que lo componen quedan trazados.</div>`;
+  m.classList.add('open');
+}
+function closeScoreModal(){const m=document.getElementById('score-modal');if(m)m.classList.remove('open');}
+window.showScoreDetail=showScoreDetail;window.closeScoreModal=closeScoreModal;
+let EX={estado:'exc',ctrl:null,level:'controls'};
+function goExplore(){showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado:'exc',ctrl:null,level:'controls'};renderExplore();}
+window.__goExplore=goExplore;
+function goExploreState(estado){showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado,ctrl:null,level:'controls'};renderExplore();}
+window.__goExploreState=goExploreState;
+window.__drillTo=(i,estado)=>{showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado,ctrl:i,level:'txns'};renderExplore();};
+const WHY={
+ 0:{desv:'PO regularizada sin PR previa',exc:'Compra sin requisición autorizada'},
+ 1:{desv:'Aprobada con un nivel de dos',exc:'Sin aprobación sobre el umbral de monto'},
+ 2:{desv:'Proveedor bloqueado o con datos observados',exc:'Proveedor inexistente en el maestro'},
+ 3:{desv:'Diferencia dentro de tolerancia acordada',exc:'Factura sin recepción o fuera de tolerancia'},
+ 4:{desv:'Similitud parcial por ventana (fuzzy)',exc:'Duplicado exacto o en ventana de días'},
+ 5:{desv:'Pago anticipado con respaldo',exc:'Anticipo sin OC ni recepción asociada'},
+ 6:{desv:'Inversión sin activo o presupuesto',exc:''}
+};
+function renderBreakdown(){
+  const el=document.getElementById('repro-breakdown');if(!el)return;
+  const colHtml=(estado,titulo,color)=>{
+    const items=CTRLS.map((c,i)=>({i,n:CTRLMETA[i][estado],why:WHY[i][estado]})).filter(x=>x.n>0&&x.why).sort((a,b)=>b.n-a.n);
+    const t=STATE_TOT[estado];
+    let h=`<div class="bd-col"><div class="bd-hdr" style="color:${color}"><span>${titulo}</span><span class="bd-tot">${t.n.toLocaleString('es-EC')}${t.usd?' · USD '+t.usd.toLocaleString('es-EC'):''}</span></div>`;
+    items.forEach(x=>{const nm=CTRLS[x.i].name.replace(/^C\d+\s·\s/,'');
+      h+=`<div class="bd-row" onclick="window.__drillTo(${x.i},'${estado}')">
+        <span class="bd-cid" style="color:${color}">C${x.i+1}</span>
+        <span class="bd-why">${nm}<br><small>${x.why}</small></span>
+        <span class="bd-n" style="color:${color}">${x.n.toLocaleString('es-EC')}</span></div>`;});
+    return h+`<div class="bd-go">clic en una fila → datos y documentación ↗</div></div>`;
+  };
+  el.innerHTML=`<div class="bd-intro">Por qué se clasifican así — clic en cualquier fila (o en un colector del recorrido) para ir directo a los datos</div>`+
+    `<div class="bd-grid">${colHtml('desv','Desviaciones gestionadas · por qué','var(--warn)')}${colHtml('exc','Excepciones · por qué','var(--crit)')}</div>`;
+}
+window.__renderBreakdown=renderBreakdown;
+/* ===== Mapa de riesgo interactivo (tooltips + drill-down) ===== */
+function rkShow(e,html){const t=document.getElementById('rk-tip');if(!t)return;t.innerHTML=html;t.style.display='block';
+  let x=e.clientX+14,y=e.clientY+14;const w=t.offsetWidth,h=t.offsetHeight;
+  if(x+w>window.innerWidth-10)x=e.clientX-w-14;if(y+h>window.innerHeight-10)y=e.clientY-h-14;
+  t.style.left=x+'px';t.style.top=y+'px';}
+function rkHide(){const t=document.getElementById('rk-tip');if(t)t.style.display='none';}
+document.addEventListener('mousemove',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');if(el)rkShow(e,el.getAttribute('data-tip'));else rkHide();});
+function provAgg(){const g={};
+  CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{const u=parseMonto(r.monto);(g[r.lifnr]=g[r.lifnr]||{n:0,usd:0,ctrls:new Set(),firstCtrl:ci});g[r.lifnr].n++;g[r.lifnr].usd+=u;(r.controles||['C'+(ci+1)]).forEach(x=>g[r.lifnr].ctrls.add(x));}));
+  return Object.entries(g).map(([p,v])=>({p,n:v.n,usd:v.usd,ctrls:[...v.ctrls].sort(),firstCtrl:v.firstCtrl})).sort((a,b)=>b.usd-a.usd);}
+function renderRiesgo(){renderRkControles();renderRkProv();renderRkMatriz();}
+window.__renderRiesgo=renderRiesgo;
+function renderRkControles(){
+  const el=document.getElementById('riesgo-controles');if(!el)return;
+  const data=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),usd:c.monto,exc:CTRLMETA[i].exc,desv:CTRLMETA[i].desv,lvl:c.level})).sort((a,b)=>b.usd-a.usd);
+  const max=Math.max(...data.map(d=>d.usd))||1;
+  el.innerHTML=data.map(d=>{const col=d.lvl==='crit'?'var(--crit)':d.lvl==='warn'?'var(--warn)':'var(--ok)';
+    const tip=`<b>C${d.i+1} · ${d.name}</b><br>USD ${d.usd.toLocaleString('es-EC')} en riesgo<br>${d.exc} excepciones · ${d.desv} desviaciones<br><span style="color:var(--muted)">clic para ver las transacciones</span>`.replace(/"/g,'&quot;');
+    return `<div class="rk-row" data-tip="${tip}" onclick="window.__drillTo(${d.i},'${d.exc>0?'exc':'desv'}')"><span class="rk-k">C${d.i+1}</span><div class="rk-track"><div class="rk-fill" style="width:${Math.round(d.usd/max*100)}%;background:${col}"></div></div><span class="rk-v">$${(d.usd/1000).toFixed(1)}K</span></div>`;}).join('');
+}
+function renderRkProv(){
+  const el=document.getElementById('riesgo-prov');if(!el)return;
+  const arr=provAgg().slice(0,8),max=Math.max(...arr.map(x=>x.usd))||1;
+  el.innerHTML=arr.map(x=>{const col=x.ctrls.length>=3?'var(--crit)':x.ctrls.length===2?'var(--warn)':'var(--accent2)';
+    const tip=`<b>Proveedor ${x.p}</b><br>${x.n} hallazgos · USD ${Math.round(x.usd).toLocaleString('es-EC')}<br>Incumple ${x.ctrls.length} controles: ${x.ctrls.join(' ')}<br><span style="color:var(--muted)">clic para ir a sus transacciones</span>`.replace(/"/g,'&quot;');
+    return `<div class="rk-row" data-tip="${tip}" onclick="window.__drillTo(${x.firstCtrl},'exc')"><span class="rk-k">${x.p}</span><div class="rk-track"><div class="rk-fill" style="width:${Math.round(x.usd/max*100)}%;background:${col}"></div></div><span class="rk-v">$${(x.usd/1000).toFixed(1)}K</span></div>`;}).join('');
+}
+function renderRkMatriz(){
+  const el=document.getElementById('riesgo-matriz');if(!el)return;
+  const W=Math.max(320,el.clientWidth||600),H=260,pad={l:54,r:18,t:14,b:28};
+  const pts=CTRLS.map((c,i)=>({i,name:c.name.replace(/^C\d+\s·\s/,''),x:CTRLMETA[i].exc,y:c.monto,s:Math.max(1,...c.rows.map(r=>scoreRow(r))),lvl:c.level}));
+  const maxX=Math.max(10,...pts.map(p=>p.x)),maxY=Math.max(1,...pts.map(p=>p.y));
+  const sx=v=>pad.l+(v/maxX)*(W-pad.l-pad.r),sy=v=>H-pad.b-(v/maxY)*(H-pad.t-pad.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">`;
+  for(let k=0;k<=4;k++){const yv=maxY*k/4,yy=sy(yv);s+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="rgba(255,255,255,.05)"/><text x="${pad.l-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="#7d95b0" font-family="monospace">$${Math.round(yv/1000)}K</text>`;}
+  s+=`<line x1="${pad.l}" y1="${H-pad.b}" x2="${W-pad.r}" y2="${H-pad.b}" stroke="var(--border)"/>`;
+  pts.forEach(p=>{const col=p.lvl==='crit'?'#ef4444':p.lvl==='warn'?'#f59e0b':'#22c55e',rr2=9+p.s/100*20;
+    const tip=`<b>C${p.i+1} · ${p.name}</b><br>${p.x} excepciones · USD ${Math.round(p.y).toLocaleString('es-EC')}<br>score máximo ${p.s}<br><span style="color:var(--muted)">clic para ver transacciones</span>`.replace(/"/g,'&quot;');
+    s+=`<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="${rr2}" fill="${col}" fill-opacity="0.6" stroke="${col}" stroke-width="1.5" style="cursor:pointer" data-tip="${tip}" data-i="${p.i}" data-exc="${p.x>0?1:0}"/>`;
+    s+=`<text x="${sx(p.x)}" y="${sy(p.y)+3}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" pointer-events="none">C${p.i+1}</text>`;});
+  s+=`</svg>`;el.innerHTML=s;
+  el.querySelectorAll('circle[data-i]').forEach(ci=>ci.addEventListener('click',()=>window.__drillTo(+ci.getAttribute('data-i'),ci.getAttribute('data-exc')==='1'?'exc':'desv')));
+}
+function renderExplore(){
+  renderExStates();renderExCrumb();
+  const body=document.getElementById('ex-body');if(!body)return;
+  body.innerHTML = EX.level==='txns'?exTxns():exControls();
+}
+function renderExStates(){
+  const w=document.getElementById('ex-states');if(!w)return;w.innerHTML='';
+  [['conf','Conformes'],['desv','Desviaciones gestionadas'],['exc','Excepciones']].forEach(([k,lab])=>{
+    const t=STATE_TOT[k];const d=document.createElement('div');d.className='ex-state exs-'+k+(EX.estado===k?' on':'');
+    d.innerHTML=`<div class="lab">${lab}</div><div class="num">${t.n.toLocaleString('es-EC')}</div>`+
+      (k==='conf'?`<div class="sub" style="color:var(--muted)">${((t.n/STATE_TOT.total)*100).toFixed(1)}% de la población</div>`
+                 :`<div class="sub">USD ${t.usd.toLocaleString('es-EC')} en riesgo</div>`);
+    d.onclick=()=>{EX.estado=k;EX.ctrl=null;EX.level='controls';renderExplore();};w.appendChild(d);
+  });
+}
+function renderExCrumb(){
+  const c=document.getElementById('ex-crumb');if(!c)return;
+  const st={conf:'Conformes',desv:'Desviaciones',exc:'Excepciones'}[EX.estado];
+  let h=`Población <span style="color:var(--muted)">›</span> <span class="cl" onclick="EX.level='controls';EX.ctrl=null;renderExplore()"><b>${st}</b></span>`;
+  if(EX.ctrl!=null){const nm=CTRLS[EX.ctrl].name.replace(/^C\d+\s·\s/,'');h+=` <span style="color:var(--muted)">›</span> <b>C${EX.ctrl+1} · ${nm}</b>`;}
+  c.innerHTML=h;
+}
+function exControls(){
+  if(EX.estado==='conf')return `<div class="ex-note">Las <b style="color:var(--ok)">${STATE_TOT.conf.n.toLocaleString('es-EC')}</b> transacciones conformes superaron los 7 controles sin excepción. La exploración por control se centra en <b style="color:var(--warn)">desviaciones</b> y <b style="color:var(--crit)">excepciones</b>: selecciona uno de esos estados arriba.</div>`;
+  const key=EX.estado, maxN=Math.max(...Object.keys(CTRLMETA).map(k=>CTRLMETA[k][key]))||1;
+  let h=`<div class="ex-info">Los 7 objetivos de control sobre este estado. Clic en un control para ver sus transacciones y documentarlas.</div><div class="exgrid">`;
+  CTRLS.forEach((c,i)=>{const m=CTRLMETA[i],n=m[key],col=key==='exc'?'var(--crit)':'var(--warn)',nm=c.name.replace(/^C\d+\s·\s/,'');
+    h+=`<div class="exg-card" onclick="exOpen(${i})" style="${n?'':'opacity:.5'}">
+      <div class="cst">${m.etapa}</div><div class="cid">C${i+1}</div><div class="cnm">${nm}</div>
+      <div class="cob">${m.obj}</div>
+      <div class="cft"><div class="cct" style="color:${n?col:'var(--muted)'}">${n.toLocaleString('es-EC')}</div><div class="cus">USD ${c.monto.toLocaleString('es-EC')}</div></div>
+      <div class="cbr"><i style="width:${Math.round(n/maxN*100)}%;background:${col}"></i></div></div>`;});
+  return h+'</div>';
+}
+function exOpen(i){if(!CTRLMETA[i][EX.estado])return;EX.ctrl=i;EX.level='txns';renderExplore();}
+function exTxns(){
+  const i=EX.ctrl,c=CTRLS[i],m=CTRLMETA[i],estado=EX.estado;
+  const list=c.rows.map((r,ri)=>({r,ri})).filter(o=>R2S[o.r.riesgo]===estado).map(o=>({...o,sc:scoreRow(o.r)})).sort((a,b)=>b.sc-a.sc);
+  const nm=c.name.replace(/^C\d+\s·\s/,'');
+  let h=`<div class="ex-tools"><div class="ex-ttl">C${i+1} · ${nm} <span style="color:var(--muted);font-weight:400;font-size:12px">· ${m.tablas}</span></div>
+    <button class="pat-toggle" onclick="togglePatterns(${i})" style="margin:0">Analizar patrones →</button></div>
+    <div id="pat-panel-${i}" class="pat-wrap" style="display:none;border-top:none;padding-top:0;margin:0 0 12px"></div>
+    <div class="ex-info" style="margin:0 0 8px">Mostrando ${list.length} casos representativos de ${m[estado].toLocaleString('es-EC')} · ordenados por score de riesgo. Califica y guarda una o varias transacciones.</div>
+    <div style="overflow-x:auto"><table class="exc-table"><thead><tr>
+    <th>Documento</th><th>Proveedor</th><th>Monto</th><th>Fecha</th><th>Controles</th><th>Hallazgo</th><th>Score</th>
+    <th>Calificación</th><th>Periodo</th><th>Comentario</th><th>Acción</th></tr></thead><tbody>`;
+  list.forEach(({r,ri,sc})=>{
+    const uid=`${i}_${ri}`,saved=issues.find(x=>x.uid===uid)||{};
+    const dotc=r.riesgo==='CRITICO'?'var(--crit)':r.riesgo==='ADVERTENCIA'?'var(--warn)':'var(--ok)';
+    const chips=(r.controles||[]).map(x=>`<span class="chipc">${x}</span>`).join('');
+    const opts=OPCIONES_RIESGO.map(o=>`<option value="${o}"${saved.calificacion===o?' selected':''}>${o||'-- Calificar --'}</option>`).join('');
+    h+=`<tr id="row-${uid}">
+      <td style="font-family:monospace;font-size:10px"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${dotc};margin-right:5px"></span>${r.ebeln}</td>
+      <td>${r.lifnr}</td><td style="font-weight:700">${r.monto}</td><td style="font-family:monospace;font-size:10px">${r.fecha||''}</td>
+      <td>${chips}</td><td style="font-size:10px;color:var(--muted)">${r.desc}</td>
+      <td><span class="exscore" onclick="showScoreDetail(${i},${ri})" title="Ver desglose del score · modelo de 2 etapas" style="cursor:pointer;background:${scoreCol(sc)}22;color:${scoreCol(sc)}">${sc}</span></td>
+      <td><select class="riesgo-sel" id="cal-${uid}" onchange="onCalChange('${uid}')">${opts}</select></td>
+      <td><select class="periodo-sel" id="per-${uid}" style="font-size:10px;padding:3px 6px"><option value="">Periodo</option>${['Q1-2025','Q2-2025','Q3-2025','Q4-2025','Q1-2026'].map(pp=>`<option value="${pp}"${saved.periodo===pp?' selected':''}>${pp}</option>`).join('')}</select></td>
+      <td><textarea class="comment-inp" id="com-${uid}" rows="1" placeholder="Hallazgo, causa, acción...">${saved.comentario||''}</textarea></td>
+      <td><button class="save-row-btn" onclick="saveRow('${uid}','${i}','${c.name}','${r.ebeln}','${r.lifnr}','${r.monto}','${r.riesgo}')">Guardar</button></td>
+    </tr>`;});
+  return h+`</tbody></table></div>`;
+}
+
+/* ===== Focos de atención · curva de cobertura de riesgo (ISACA) ===== */
+const POB_TOTAL=2600, CONF_N=2080, DESV_N=388, EXC_N=132;
+let FOCUS_TX=null, CUM=null, USD_TOTAL=0;
+function scoreOf(controles,riesgo,monto){
+  const base=controles.reduce((s,c)=>s+(PESO_NIVEL[ctrlLevel(c)]||10),0);
+  const sev=riesgo==='CRITICO'?1.0:riesgo==='ADVERTENCIA'?0.7:0.4;
+  const mat=Math.min(25,Math.round(monto/1000));
+  return Math.max(1,Math.min(100,Math.round(base*sev+mat)));
+}
+function buildPoblacion(){
+  if(FOCUS_TX)return;
+  let s=424242;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+  const PROV=['100234','100512','100891','100781','101044','100345','101200','101300','100678','999001','100023'];
+  const mkdoc=cc=>{if(cc==='C5'||cc==='C4')return (rnd()<0.5?'RE 500003':'45000112')+String(1000+Math.floor(rnd()*8999)).slice(0,4);
+    if(cc==='C6')return 'ZP 20000'+String(10000+Math.floor(rnd()*9999)).slice(1,5);
+    if(cc==='C7')return 'A-100-2025-'+String(1+Math.floor(rnd()*80)).padStart(3,'0');
+    return '450001'+String(10000+Math.floor(rnd()*9999)).slice(0,4);};
+  const fecha=()=>`2025-${String(1+Math.floor(rnd()*8)).padStart(2,'0')}-${String(1+Math.floor(rnd()*28)).padStart(2,'0')}`;
+  const EXC_TPL=[{c:['C5'],h:'Duplicado exacto mismo día'},{c:['C5','C4'],h:'Duplicado en ventana +3 días'},
+    {c:['C4'],h:'Factura sin recepción'},{c:['C4','C1'],h:'Diferencia cantidad sobre tolerancia'},
+    {c:['C6'],h:'Anticipo sin EBELN asociado'},{c:['C6','C1'],h:'Pago antes de recepción'},
+    {c:['C2'],h:'Sin aprobación sobre el umbral'},{c:['C3'],h:'Proveedor inexistente en maestro'}];
+  const DESV_TPL=[{c:['C4'],h:'Diferencia dentro de tolerancia'},{c:['C6'],h:'Pago anticipado con respaldo'},
+    {c:['C2'],h:'Aprobado con un nivel de dos'},{c:['C1'],h:'PO regularizada sin PR previa'},
+    {c:['C7'],h:'Inversión sin activo/presupuesto'},{c:['C3'],h:'Proveedor con datos observados'}];
+  const gen=(n,tpls,riesgo,mMin,mMax)=>{const arr=[];
+    for(let i=0;i<n;i++){const t=pick(tpls),monto=Math.round(mMin+rnd()*(mMax-mMin));
+      arr.push({controles:t.c.slice(),desc:t.h,riesgo,monto,lifnr:pick(PROV),fecha:fecha(),ctrl:t.c[0],ebeln:mkdoc(t.c[0]),score:scoreOf(t.c,riesgo,monto)});}
+    return arr;};
+  const exc=gen(EXC_N,EXC_TPL,'CRITICO',5000,55000);    // excepciones: montos altos
+  const desv=gen(DESV_N,DESV_TPL,'ADVERTENCIA',300,3000); // desviaciones: montos bajos
+  FOCUS_TX=exc.concat(desv).sort((a,b)=>b.score-a.score);
+  USD_TOTAL=FOCUS_TX.reduce((s2,t)=>s2+t.monto,0);
+  CUM=[0];FOCUS_TX.forEach(t=>CUM.push(CUM[CUM.length-1]+t.monto));
+}
+function coverageAt(pct){
+  const n=Math.max(1,Math.round(POB_TOTAL*pct/100));
+  const nn=Math.min(n,FOCUS_TX.length);
+  const usd=CUM[nn];
+  return {n,nn,usd,pctUsd:usd/USD_TOTAL*100,scoreMin:FOCUS_TX[nn-1].score};
+}
+function renderFocos(){buildPoblacion();renderFocoCurva();renderFocoCalc();updateFoco(document.getElementById('foco-range').value);}
+window.__renderFocos=renderFocos;
+function renderFocoCalc(){
+  const el=document.getElementById('foco-calc');if(!el)return;
+  const t0=FOCUS_TX[0];
+  const base0=t0.controles.reduce((s,c)=>s+(PESO_NIVEL[ctrlLevel(c)]||10),0);
+  const sev0=t0.riesgo==='CRITICO'?1.0:0.7;
+  const mat0=Math.min(25,Math.round(t0.monto/1000));
+  const pesosTxt=t0.controles.map(c=>`${c} (${PESO_NIVEL[ctrlLevel(c)]||10})`).join(' + ');
+  el.innerHTML=`
+    <div class="fc-t">Cómo se calcula el score de cada transacción</div>
+    <div class="fc-formula">
+      <b>Etapa 1 · binaria.</b> Cada transacción se evalúa contra los 7 controles: cumple o no cumple.<br>
+      <b>Etapa 2 · ponderación.</b> &nbsp;Score = ( Σ pesos de los controles incumplidos × severidad del hallazgo ) + materialidad &nbsp;<span style="color:var(--muted)">[tope 100]</span><br>
+      &nbsp;&nbsp;· Peso por control: <b>crítico 30 · advertencia 20 · básico 10</b><br>
+      &nbsp;&nbsp;· Severidad del hallazgo: <b>crítico ×1.0 · advertencia ×0.7</b><br>
+      &nbsp;&nbsp;· Materialidad: <b>monto ÷ 1.000</b> (tope 25)
+    </div>
+    <div class="fc-ex">Ejemplo (fila 1 de la muestra): incumple ${pesosTxt} = <b>${base0}</b>; hallazgo ${t0.riesgo.toLowerCase()} ×${sev0.toFixed(1)} = ${Math.round(base0*sev0)}; monto ${t0.monto.toLocaleString('es-EC')} → materialidad ${mat0}; <b>score = ${t0.score}</b>. &nbsp;Clic en cualquier score de las tablas para ver su desglose.</div>
+    <div class="fc-t" style="margin-top:14px">Cómo se construye la curva</div>
+    <div class="fc-vars">
+      <span>Población <b>N = ${POB_TOTAL.toLocaleString('es-EC')}</b></span>
+      <span>USD en riesgo <b>${USD_TOTAL.toLocaleString('es-EC')}</b></span>
+      <span>Con hallazgo <b>${(EXC_N+DESV_N).toLocaleString('es-EC')}</b> · conformes <b>${CONF_N.toLocaleString('es-EC')}</b></span>
+    </div>
+    <div class="fc-formula">Se ordena la población por score de mayor a menor y se acumula el USD en riesgo.<br>
+    Cobertura(k) = ( Σ USD de las k transacciones de mayor score ) ÷ USD total en riesgo.<br>
+    Eje X = % de población revisada &nbsp;·&nbsp; Eje Y = % del USD cubierto &nbsp;·&nbsp; línea punteada = revisión al azar.</div>`;
+}
+function renderFocoCurva(){
+  const el=document.getElementById('foco-curva');if(!el)return;
+  const W=Math.max(320,el.clientWidth||560),H=230,pad={l:44,r:14,t:16,b:34},NF=FOCUS_TX.length;
+  const pts=[];
+  for(let k=1;k<=NF;k++){if(k%5===0||k===NF)pts.push({x:k/POB_TOTAL,y:CUM[k]/USD_TOTAL});}
+  pts.push({x:NF/POB_TOTAL,y:1});pts.push({x:1,y:1});   // cola plana: revisar más no añade riesgo
+  const sx=v=>pad.l+v*(W-pad.l-pad.r),sy=v=>H-pad.b-v*(H-pad.t-pad.b);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">`;
+  for(let k=0;k<=4;k++){const gy=sy(k/4),gx=sx(k/4);
+    s+=`<line x1="${pad.l}" y1="${gy}" x2="${W-pad.r}" y2="${gy}" stroke="rgba(255,255,255,.05)"/><text x="${pad.l-6}" y="${gy+3}" text-anchor="end" font-size="9" fill="#7d95b0" font-family="monospace">${k*25}%</text>`;
+    s+=`<text x="${gx}" y="${H-pad.b+15}" text-anchor="middle" font-size="9" fill="#7d95b0" font-family="monospace">${k*25}%</text>`;}
+  s+=`<line x1="${sx(0)}" y1="${sy(0)}" x2="${sx(1)}" y2="${sy(1)}" stroke="#4c627e" stroke-dasharray="4,4" stroke-width="1"/>`;
+  const d='M'+pts.map(p=>`${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(' L');
+  s+=`<path d="${d} L${sx(1).toFixed(1)},${sy(0)} L${sx(0)},${sy(0)} Z" fill="rgba(42,143,255,.10)"/>`;
+  s+=`<path d="${d}" fill="none" stroke="#2a8fff" stroke-width="2.5"/>`;
+  s+=`<line id="foco-vline" x1="0" y1="${pad.t}" x2="0" y2="${H-pad.b}" stroke="#2a8fff" stroke-dasharray="3,3" opacity="0.6"/>`;
+  s+=`<circle id="foco-dot" cx="0" cy="0" r="6" fill="#2a8fff" stroke="#0a1628" stroke-width="2" data-tip=""/>`;
+  s+=`<text x="${pad.l}" y="11" font-size="9" fill="#7d95b0">% USD en riesgo cubierto</text>`;
+  s+=`<text x="${W-pad.r}" y="${H-3}" text-anchor="end" font-size="9" fill="#7d95b0">% población revisada (ordenada por score)</text>`;
+  s+=`</svg>`;el.innerHTML=s;el._geo={sx,sy};
+}
+function updateFoco(pct){
+  pct=+pct;const c=coverageAt(pct);
+  const pe=document.getElementById('foco-pct');if(pe)pe.textContent=pct+'%';
+  const sm=document.getElementById('foco-scoremin');if(sm)sm.innerHTML=`score mínimo en la muestra: <b style="color:var(--text)">${c.scoreMin}</b>`;
+  const el=document.getElementById('foco-curva');
+  if(el&&el._geo){const {sx,sy}=el._geo,x=sx(pct/100),y=sy(c.pctUsd/100);
+    const dot=document.getElementById('foco-dot'),vl=document.getElementById('foco-vline');
+    if(dot){dot.setAttribute('cx',x);dot.setAttribute('cy',y);dot.setAttribute('data-tip',`${pct}% población → ${c.pctUsd.toFixed(1)}% del USD · score ≥ ${c.scoreMin}`);}
+    if(vl){vl.setAttribute('x1',x);vl.setAttribute('x2',x);}}
+  const saturado=c.n>c.nn;
+  const m=document.getElementById('foco-metrics');
+  if(m)m.innerHTML=`
+    <div class="foco-big"><div class="foco-big-n">${c.n.toLocaleString('es-EC')}</div><div class="foco-big-l">transacciones a revisar · ${pct}% de ${POB_TOTAL.toLocaleString('es-EC')}</div></div>
+    <div class="foco-big"><div class="foco-big-n" style="color:var(--ok)">${c.pctUsd.toFixed(1)}%</div><div class="foco-big-l">del USD en riesgo cubierto · USD ${Math.round(c.usd).toLocaleString('es-EC')} de ${Math.round(USD_TOTAL).toLocaleString('es-EC')}</div></div>
+    <div class="foco-cmp">Una revisión al azar del mismo ${pct}% cubriría ≈ ${pct}% del riesgo. Priorizar por score multiplica la cobertura <b style="color:var(--accent2)">${(c.pctUsd/pct).toFixed(1)}×</b>.${saturado?`<br><span style="color:var(--muted)">Las ${c.nn} transacciones con hallazgo ya están cubiertas; revisar más solo añade transacciones conformes.</span>`:''}</div>`;
+  renderFocoTabla(c.nn);
+}
+window.updateFoco=updateFoco;
+function currentMuestra(){return FOCUS_TX.slice(0,coverageAt(+document.getElementById('foco-range').value).nn);}
+function renderFocoTabla(nn){
+  const el=document.getElementById('foco-tabla');if(!el)return;
+  const sel=FOCUS_TX.slice(0,nn), usd=CUM[nn];
+  const cnt=document.getElementById('foco-muestra-n');
+  if(cnt)cnt.textContent=`· ${sel.length.toLocaleString('es-EC')} transacciones · USD ${usd.toLocaleString('es-EC')}`;
+  let h=`<div class="foco-tabla-wrap"><table class="exc-table"><thead><tr><th>#</th><th>Score</th><th>Documento</th><th>Proveedor</th><th>Monto USD</th><th>Ctrl</th><th>Controles</th><th>Riesgo</th><th>Hallazgo</th></tr></thead><tbody>`;
+  sel.forEach((t,k)=>{const col=scoreCol(t.score),pill=t.riesgo==='CRITICO'?'pill-crit':'pill-warn';
+    h+=`<tr><td style="color:var(--muted)">${k+1}</td>
+      <td><span class="exscore" style="background:${col}22;color:${col}">${t.score}</span></td>
+      <td style="font-family:monospace;font-size:10px">${t.ebeln}</td>
+      <td>${t.lifnr}</td><td style="font-weight:700">${t.monto.toLocaleString('es-EC')}</td>
+      <td style="font-family:monospace;font-size:10px">${t.ctrl}</td>
+      <td>${t.controles.map(cc=>`<span class="chipc">${cc}</span>`).join('')}</td>
+      <td><span class="pill ${pill}">${t.riesgo}</span></td>
+      <td style="font-size:10px;color:var(--muted)">${t.desc}</td></tr>`;});
+  h+=`</tbody></table></div>`;
+  el.innerHTML=h;
+}
+function exportMuestra(){
+  const sel=currentMuestra(), pct=document.getElementById('foco-range').value;
+  const head=['#','Score','Documento','Proveedor','Monto USD','Control principal','Controles incumplidos','Riesgo','Hallazgo','Fecha'];
+  const rows=[head];
+  sel.forEach((t,k)=>rows.push([k+1,t.score,t.ebeln,t.lifnr,t.monto,t.ctrl,t.controles.join(' / '),t.riesgo,t.desc,t.fecha]));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`muestra_focos_riesgo_${pct}pct_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+window.exportMuestra=exportMuestra;
+
 function closeDrill(){
   document.getElementById('drilldown-panel').classList.remove('open');
   document.querySelectorAll('.ctrl-row').forEach(r=>r.classList.remove('active-ctrl'));
@@ -452,6 +1068,10 @@ function showView(id,btn){
   document.getElementById('view-'+id).classList.add('active');
   if(btn)btn.classList.add('active');
   if(id==='seguimiento')renderSeguimiento();
+  if(id==='reproduccion'&&window.__reproResize){window.__reproResize();renderBreakdown();}
+  if(id==='controles')renderExplore();
+  if(id==='riesgo')renderRiesgo();
+  if(id==='focos')renderFocos();
 }
 
 function buildRiskMeter(){
@@ -541,8 +1161,9 @@ function buildPreviewTable(headers,rows){
 }
 
 buildCtrlList('ctrl-summary',false);
-buildCtrlList('ctrl-full',true);
-buildRiskMeter();
+renderExplore();
+renderBreakdown();
+renderRiesgo();
 renderSeguimiento();
 
 const sc='#64748b',gc='rgba(255,255,255,.04)';
@@ -570,35 +1191,190 @@ new Chart(document.getElementById('donutChart'),{
   options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
 });
 
-new Chart(document.getElementById('provChart'),{
-  type:'bar',
-  data:{labels:['Prov. 100234','Prov. 100512','Prov. 100891','Prov. 101044','Prov. 101200'],
-    datasets:[
-      {label:'Excepciones',data:[38,31,27,19,14],backgroundColor:'#ef4444',borderRadius:3,borderSkipped:false},
-      {label:'USD K',data:[22,18,14,9,6],backgroundColor:'#f59e0b',borderRadius:3,borderSkipped:false}
-    ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:sc,font:{size:9}},grid:{display:false}},y:{ticks:{color:sc,font:{size:8}},grid:{color:gc}}}}
-});
+/* Mapa de riesgo reconstruido con visualizaciones propias interactivas (renderRiesgo) */
+</script>
+<script>
+/* ===== Animación de reproducción: recorrido end-to-end del flujo P2P ===== */
+(() => {
+  "use strict";
+  const cvs=document.getElementById('reproCanvas'); if(!cvs) return;
+  const ctx=cvs.getContext('2d');
+  const CO={bg0:'#081221',bg1:'#0b1a30',ink:'#e2e8f0',dim:'#7d95b0',faint:'#4c627e',
+    line:'rgba(255,255,255,0.10)',rail:'rgba(120,150,190,0.28)',accent:'#2a8fff',
+    conf:'#22c55e',desv:'#f59e0b',exc:'#ef4444',neutral:'#8aa0bb'};
+  const stCol=s=>({conf:CO.conf,desv:CO.desv,exc:CO.exc}[s]||CO.neutral);
+  const money=n=>'USD '+Math.round(n).toLocaleString('es-EC');
+  const num=n=>Math.round(n).toLocaleString('es-EC');
+  const STAGES=[
+    {n:'Solicitud',t:'ME51N'},
+    {n:'Liberación',t:'ME29N',ctrl:'C2'},
+    {n:'Orden de compra',t:'ME21N',ctrl:'C1'},
+    {n:'Recepción',t:'MIGO',ctrl:'C3'},
+    {n:'3-Way Match',t:'MIRO',ctrl:'C4'},
+    {n:'Pago',t:'F110',ctrl:'C5/C6'}
+  ];
+  const TARGET={conf:2080,desv:388,exc:132,total:2600,usdDesv:23300,usdExc:108900};
+  const DESV_AT=[1,2,3,4], EXC_AT=[1,3,4,5]; // estaciones donde se bifurcan
 
-new Chart(document.getElementById('bubbleChart'),{
-  type:'bubble',
-  data:{datasets:[
-    {label:'C5 Duplicados',data:[{x:112,y:48600,r:18}],backgroundColor:'rgba(239,68,68,.75)'},
-    {label:'C4 3-Way Match',data:[{x:1218,y:31200,r:15}],backgroundColor:'rgba(245,158,11,.75)'},
-    {label:'C6 Anticipos',data:[{x:294,y:22800,r:12}],backgroundColor:'rgba(251,146,60,.75)'},
-    {label:'C1 Sin PR',data:[{x:109,y:14100,r:9}],backgroundColor:'rgba(42,143,255,.75)'},
-    {label:'C2 Aprobaciones',data:[{x:67,y:8700,r:8}],backgroundColor:'rgba(167,139,250,.75)'},
-    {label:'C3 Proveedores',data:[{x:12,y:3400,r:6}],backgroundColor:'rgba(34,197,94,.75)'},
-    {label:'C7 CAPEX',data:[{x:8,y:3400,r:5}],backgroundColor:'rgba(34,197,94,.5)'},
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'#94a3b8',font:{size:9},boxWidth:8,padding:10}}},
-    scales:{
-      x:{title:{display:true,text:'Cantidad de excepciones',color:sc,font:{size:9}},ticks:{color:sc,font:{size:8}},grid:{color:gc},min:0},
-      y:{title:{display:true,text:'Impacto USD',color:sc,font:{size:9}},ticks:{color:sc,font:{size:8},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:gc},min:0,max:60000}
-    }}
-});
+  let W,H,DPR,L={};
+  function size(){
+    const host=cvs.parentElement, cw=Math.max(320,Math.min(host.clientWidth||900,940));
+    W=cw; H=Math.round(cw*0.60);
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    cvs.width=Math.round(W*DPR);cvs.height=Math.round(H*DPR);cvs.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);layout();
+  }
+  function layout(){
+    const px=28; L.px=px;
+    L.y0=Math.round(H*0.50);
+    L.colX=W-px-150;                       // x donde están los colectores
+    const xFirst=px+70, xLast=L.colX-70;
+    L.st=STAGES.map((s,i)=>({...s,x:Math.round(xFirst+(xLast-xFirst)*(i/(STAGES.length-1))),y:L.y0}));
+    L.entry={x:px,y:L.y0};
+    L.colConf={x:L.colX,y:L.y0};
+    L.colDesv={x:L.colX,y:Math.round(H*0.145)};
+    L.colExc ={x:L.colX,y:Math.round(H*0.855)};
+    L.headerH=54;
+  }
+
+  // --- rutas (waypoints) ---
+  function railTo(k){ const p=[{...L.entry}]; for(let i=0;i<=k;i++)p.push({x:L.st[i].x,y:L.y0}); return p; }
+  function routeConf(){ const p=railTo(STAGES.length-1); p.push({x:L.colConf.x,y:L.y0}); return {pts:p,bif:p.length-1}; }
+  function routeBranch(k,col){ const p=railTo(k); const sx=L.st[k].x;
+    p.push({x:sx+24,y:L.y0});
+    p.push({x:L.colX-46,y:col.y});
+    p.push({x:col.x,y:col.y});
+    return {pts:p,bif:p.length-3}; }
+
+  // --- estado ---
+  let tokens=[],counts={conf:0,desv:0,exc:0},shown={conf:0,desv:0,exc:0},usd={desv:0,exc:0};
+  let plan=[],pIdx=0,running=false,finished=false,startT=0,lastT=0,nextEmit=0,seed=0,pulseArr=[];
+  const SPEED=235;
+  function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+  function pick(a){return a[Math.floor(rnd()*a.length)];}
+  function buildPlan(){
+    const pl=[]; const push=(cls,n)=>{let l=n;while(l>0){const q=Math.min(l,cls==='conf'?24:cls==='desv'?13:8);pl.push({cls,n:q});l-=q;}};
+    push('conf',TARGET.conf);push('desv',TARGET.desv);push('exc',TARGET.exc);
+    for(let i=pl.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[pl[i],pl[j]]=[pl[j],pl[i]];}
+    return pl;
+  }
+  function reset(){
+    seed=20260708; tokens=[];counts={conf:0,desv:0,exc:0};shown={conf:0,desv:0,exc:0};usd={desv:0,exc:0};
+    plan=buildPlan();pIdx=0;finished=false;startT=0;lastT=0;nextEmit=0.15;pulseArr=[];
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){counts={...TARGET};shown={...counts};usd={desv:TARGET.usdDesv,exc:TARGET.usdExc};finished=true;}
+  }
+  function emit(){
+    const lot=plan[pIdx++]; let route,bifK=null;
+    if(lot.cls==='conf')route=routeConf();
+    else if(lot.cls==='desv'){bifK=pick(DESV_AT);route=routeBranch(bifK,L.colDesv);}
+    else {bifK=pick(EXC_AT);route=routeBranch(bifK,L.colExc);}
+    const jitter=(rnd()-0.5)*10;
+    const pts=route.pts.map((p,idx)=>idx===0?{x:p.x,y:p.y+jitter}:{x:p.x,y:p.y+(idx<route.bif?jitter:0)});
+    tokens.push({cls:lot.cls,share:lot.n,pts,bif:route.bif,i:0,d:0,r:6.5,done:false});
+  }
+  function seg(t){return {a:t.pts[t.i],b:t.pts[t.i+1]};}
+  function segLen(t){const {a,b}=seg(t);return Math.hypot(b.x-a.x,b.y-a.y)||1;}
+  function pos(t){const {a,b}=seg(t);const u=t.d/segLen(t);return {x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u};}
+  function classify(t){counts[t.cls]+=t.share; const col= t.cls==='conf'?L.colConf:t.cls==='desv'?L.colDesv:L.colExc;
+    pulseArr.push({x:col.x,y:col.y,c:stCol(t.cls),t:0});}
+  function update(dt,now){
+    if(pIdx<plan.length&&now>=nextEmit){emit();nextEmit=now+0.16;}
+    for(const t of tokens){
+      if(t.done)continue;
+      t.d+=SPEED*dt;
+      let sl=segLen(t);
+      while(t.d>=sl && t.i<t.pts.length-2){t.d-=sl;t.i++;sl=segLen(t);}
+      if(t.i>=t.pts.length-2 && t.d>=sl){t.done=true;classify(t);}
+    }
+    tokens=tokens.filter(t=>!t.done);
+    for(const k in counts)shown[k]+=(counts[k]-shown[k])*Math.min(1,dt*6);
+    const prog=Math.min(1,(shown.conf+shown.desv+shown.exc)/TARGET.total);
+    usd.desv=TARGET.usdDesv*prog;usd.exc=TARGET.usdExc*prog;
+    pulseArr.forEach(p=>p.t+=dt*2.5);pulseArr=pulseArr.filter(p=>p.t<1);
+    if(!finished&&pIdx>=plan.length&&tokens.length===0&&Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)<3)finished=true;
+  }
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
+
+  function drawRails(){
+    // rail principal
+    ctx.strokeStyle=CO.rail;ctx.lineWidth=5;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(L.entry.x,L.y0);
+    L.st.forEach(s=>ctx.lineTo(s.x,L.y0));ctx.lineTo(L.colConf.x,L.y0);ctx.stroke();
+    // ramas guía
+    ctx.lineWidth=2;ctx.setLineDash([3,6]);
+    DESV_AT.forEach(k=>{ctx.strokeStyle='rgba(245,158,11,0.30)';ctx.beginPath();
+      ctx.moveTo(L.st[k].x,L.y0);ctx.lineTo(L.st[k].x+24,L.y0);ctx.lineTo(L.colX-46,L.colDesv.y);ctx.lineTo(L.colDesv.x,L.colDesv.y);ctx.stroke();});
+    EXC_AT.forEach(k=>{ctx.strokeStyle='rgba(239,68,68,0.30)';ctx.beginPath();
+      ctx.moveTo(L.st[k].x,L.y0);ctx.lineTo(L.st[k].x+24,L.y0);ctx.lineTo(L.colX-46,L.colExc.y);ctx.lineTo(L.colExc.x,L.colExc.y);ctx.stroke();});
+    ctx.setLineDash([]);
+    // estaciones
+    L.st.forEach((s,i)=>{
+      ctx.fillStyle='#0c1a30';ctx.strokeStyle=s.ctrl?CO.accent:CO.rail;ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(s.x,L.y0,s.ctrl?9:7,0,7);ctx.fill();ctx.stroke();
+      ctx.textAlign='center';
+      ctx.fillStyle=CO.ink;ctx.font='600 12px system-ui';ctx.fillText(s.n,s.x,L.y0-26);
+      ctx.fillStyle=CO.dim;ctx.font='600 9px monospace';ctx.fillText(s.t,s.x,L.y0+20);
+      if(s.ctrl){ctx.fillStyle=CO.accent;ctx.font='700 8px monospace';ctx.fillText('control '+s.ctrl,s.x,L.y0+32);}
+    });
+    ctx.textAlign='left';
+    // entrada
+    ctx.fillStyle=CO.faint;ctx.font='600 9px monospace';ctx.fillText('ENTRADA',L.entry.x,L.y0-14);
+  }
+  function drawCollector(col,key,title){
+    const c=stCol(key),bw=140,bh=64,x=col.x-8,y=col.y-bh/2;
+    ctx.fillStyle='rgba(15,32,56,0.85)';ctx.strokeStyle=c;ctx.lineWidth=1.5;rr(x,y,bw,bh,9);ctx.fill();ctx.stroke();
+    ctx.fillStyle=c;rr(x,y,4,bh,2);ctx.fill();
+    ctx.textAlign='left';
+    ctx.fillStyle=c;ctx.font='700 10px system-ui';ctx.fillText(title,x+12,y+17);
+    ctx.fillStyle=CO.ink;ctx.font='700 22px system-ui';ctx.fillText(num(shown[key]),x+12,y+40);
+    if(key==='conf'){ctx.fillStyle=CO.faint;ctx.font='500 9px monospace';ctx.fillText(((shown.conf/TARGET.total)*100||0).toFixed(1)+'% población',x+12,y+55);}
+    else{ctx.fillStyle=c;ctx.font='600 11px monospace';ctx.fillText(money(key==='exc'?usd.exc:usd.desv),x+12,y+55);}
+    ctx.fillStyle=CO.faint;ctx.font='500 8px monospace';ctx.textAlign='right';ctx.fillText('clic ↗',x+bw-10,y+14);ctx.textAlign='left';
+  }
+  function draw(now){
+    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,CO.bg1);g.addColorStop(1,CO.bg0);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // header (solo estado; el branding ya está en el topbar)
+    ctx.textBaseline='alphabetic';ctx.textAlign='left';
+    const lab=finished?'RECORRIDO COMPLETO':'PROCESANDO';ctx.font='600 11px monospace';const lw=ctx.measureText(lab).width;
+    const pulse=finished?1:.5+.5*Math.sin(now*4);ctx.fillStyle=finished?CO.conf:`rgba(42,143,255,${.4+.6*pulse})`;
+    ctx.beginPath();ctx.arc(W-L.px-lw-13,22,5,0,7);ctx.fill();ctx.fillStyle=finished?CO.conf:CO.dim;ctx.fillText(lab,W-L.px-lw,26);
+    drawRails();
+    // colectores
+    drawCollector(L.colDesv,'desv','DESVIACIONES');
+    drawCollector(L.colExc,'exc','EXCEPCIONES');
+    drawCollector(L.colConf,'conf','CONFORMES');
+    // pulsos al entrar a colector
+    pulseArr.forEach(p=>{ctx.strokeStyle=p.c;ctx.globalAlpha=1-p.t;ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,6+p.t*16,0,7);ctx.stroke();});ctx.globalAlpha=1;
+    // tokens
+    for(const t of tokens){const p=pos(t);const c=t.i>=t.bif?stCol(t.cls):CO.neutral;
+      ctx.save();ctx.shadowColor=c;ctx.shadowBlur=9;ctx.fillStyle=c;ctx.beginPath();ctx.arc(p.x,p.y,t.r,0,7);ctx.fill();ctx.restore();}
+    // pie: totales + leyenda
+    const prog=Math.min(1,(shown.conf+shown.desv+shown.exc)/TARGET.total),fy=H-16;
+    ctx.fillStyle=CO.ink;ctx.font='700 15px system-ui';ctx.fillText(num(TARGET.total*prog)+' documentos',L.px,fy);
+    ctx.fillStyle=CO.exc;ctx.font='700 15px system-ui';
+    const t2=money((TARGET.usdDesv+TARGET.usdExc)*prog)+' en riesgo';
+    ctx.fillText(t2,L.px+ctx.measureText(num(TARGET.total*prog)+' documentos').width+18,fy);
+    // leyenda derecha
+    const items=[['conf','Conforme'],['desv','Desviación'],['exc','Excepción']];let lx=L.px;const ly=H-34;
+    ctx.font='500 11px system-ui';
+    items.forEach(([k,lab2])=>{ctx.fillStyle=stCol(k);ctx.beginPath();ctx.arc(lx+5,ly-4,5,0,7);ctx.fill();
+      ctx.fillStyle=CO.dim;ctx.fillText(lab2,lx+15,ly);lx+=18+ctx.measureText(lab2).width+18;});
+  }
+  function frame(ts){if(!running)return;if(!startT){startT=ts;lastT=ts;}const now=(ts-startT)/1000;let dt=(ts-lastT)/1000;lastT=ts;dt=Math.min(dt,0.05);
+    if(!finished||pulseArr.length||Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)>=3)update(dt,now);draw(now);requestAnimationFrame(frame);}
+  function start(){running=true;startT=0;lastT=0;requestAnimationFrame(frame);}
+  window.__reproReset=()=>{size();reset();start();};
+  window.__reproResize=()=>{size();};
+  const rb=document.getElementById('reproReplay');if(rb)rb.onclick=()=>{size();reset();start();};
+  const eb=document.getElementById('reproExplore');if(eb)eb.onclick=()=>{if(window.__goExplore)window.__goExplore();};
+  function hitAt(x,y){const test=col=>{const bw=140,bh=64,bx=col.x-8,by=col.y-bh/2;return x>=bx&&x<=bx+bw&&y>=by&&y<=by+bh;};
+    if(test(L.colDesv))return 'desv';if(test(L.colExc))return 'exc';if(test(L.colConf))return 'conf';return null;}
+  function canvasXY(e){const rect=cvs.getBoundingClientRect();return {x:(e.clientX-rect.left)*(W/rect.width),y:(e.clientY-rect.top)*(H/rect.height)};}
+  cvs.addEventListener('click',e=>{const {x,y}=canvasXY(e);const s=hitAt(x,y);if(s&&window.__goExploreState)window.__goExploreState(s);});
+  cvs.addEventListener('mousemove',e=>{const {x,y}=canvasXY(e);cvs.style.cursor=hitAt(x,y)?'pointer':'default';});
+  window.addEventListener('resize',()=>size());
+  size();reset();start();
+})();
 </script>
 </body>
 </html>
