@@ -21,14 +21,30 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .badge-live{background:#0f3d24;color:#22c55e;border:1px solid #166534;font-size:9px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.6px}
 .period{font-size:11px;color:var(--muted)}
 .nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:0 20px}
-.nav-group{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:0 10px 0 2px;user-select:none;align-self:center}
-.nav-sep{width:1px;height:16px;background:var(--border);margin:0 14px;align-self:center}
+.nav-sep{width:1px;height:16px;background:var(--border);margin:0 16px;align-self:center}
 .cv-host-err{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(8,18,33,.94);color:var(--text);font-size:12px;text-align:center;padding:18px;z-index:5}
 .cv-host-err b{color:var(--warn);font-size:12px;font-weight:700}
 .cv-host-err small{color:var(--muted);font-size:10.5px;max-width:420px;line-height:1.5}
 .cv-host-err button{margin-top:6px;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer}
 .rt-banner{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:200;background:var(--bg3);border:1px solid var(--warn);border-radius:8px;padding:9px 14px;font-size:11px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px}
 .rt-banner button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1}
+/* ARCHIVO: index.html · BLOQUE: barra de transporte de las animaciones */
+.rp-transport{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+.tp-btn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:0}
+.tp-btn:hover{border-color:var(--accent2);color:#fff}
+.tp-btn:disabled{opacity:.35;cursor:default}
+.tp-btn svg{width:14px;height:14px;fill:currentColor}
+.tp-btn.primary{width:38px;height:38px;background:var(--accent);border-color:var(--accent)}
+.tp-btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.tp-btn.primary svg{width:16px;height:16px;fill:#fff}
+.tp-sep{width:1px;height:22px;background:var(--border);margin:0 6px}
+.tp-speed{display:inline-flex;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:2px}
+.tp-speed button{background:none;border:none;color:var(--muted);font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:4px;cursor:pointer}
+.tp-speed button.on{background:var(--bg4);color:#fff}
+.tp-prog{display:flex;align-items:center;gap:8px;flex:1;min-width:200px;margin-left:6px}
+.tp-bar{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.tp-bar i{display:block;height:100%;width:0;background:var(--accent2);border-radius:3px;transition:width .12s linear}
+.tp-count{font-size:10.5px;color:var(--muted);font-family:monospace;white-space:nowrap;min-width:132px;text-align:right}
 .fit-btn{background:var(--bg4);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:10.5px;font-weight:600;cursor:pointer}
 .fit-btn:hover{border-color:var(--accent2);color:#fff}
 .pat-host{margin-top:12px}
@@ -130,7 +146,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .watermark{text-align:right;font-size:9px;color:rgba(255,255,255,.1);padding:8px 20px;border-top:1px solid var(--border);margin-top:8px;letter-spacing:.3px}
 @media print{
   body{background:#fff;color:#000}
-  .nav,.nav-group,.nav-sep,.topbar-right .badge-live,.upload-zone,.parse-btn,.print-btn,.close-btn,.save-row-btn,.nav-btn,.fit-btn,.rt-banner{display:none!important}
+  .nav,.nav-sep,.topbar-right .badge-live,.upload-zone,.parse-btn,.print-btn,.close-btn,.save-row-btn,.nav-btn,.fit-btn,.rt-banner{display:none!important}
   .view{display:block!important;padding:10px}
   .panel,.kpi,.ctrl-row,.drilldown{background:#fff!important;border:1px solid #ccc!important;color:#000!important}
   .kpi-label,.muted,.panel-title,.ctrl-name,.period{color:#555!important}
@@ -332,14 +348,12 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
   </div>
 </div>
 <div class="nav" role="navigation" aria-label="Navegación principal">
-  <span class="nav-group">Análisis</span>
   <button class="nav-btn" data-view="resumen" onclick="showView('resumen',this)">Resumen</button>
   <button class="nav-btn active" data-view="reproduccion" onclick="showView('reproduccion',this)">▶ Ciclo</button>
   <button class="nav-btn" data-view="controles" onclick="showView('controles',this)">Controles</button>
   <button class="nav-btn" data-view="autorizaciones" onclick="showView('autorizaciones',this)">▶ Autorizaciones</button>
   <button class="nav-btn" data-view="riesgo" onclick="showView('riesgo',this)">Mapa</button>
   <span class="nav-sep" aria-hidden="true"></span>
-  <span class="nav-group">Gestión</span>
   <button class="nav-btn" data-view="focos" onclick="showView('focos',this)">Focos</button>
   <button class="nav-btn" data-view="seguimiento" onclick="showView('seguimiento',this)">Seguimiento</button>
   <button class="nav-btn" data-view="carga" onclick="showView('carga',this)">Origen</button>
@@ -348,15 +362,10 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 <div id="view-reproduccion" class="view active">
   <div class="au-top">
     <div>
-      <div class="au-title">Recorrido Procure-to-Pay · documento a documento</div>
+      <div class="au-title">Recorrido Procure-to-Pay · población completa, documento a documento</div>
       <div class="au-sub">Cada documento atraviesa las seis etapas del ciclo y se somete a los 7 objetivos de control. Al superarlos queda conforme; si falla, se clasifica como desviación gestionada o excepción, con su motivo.</div>
     </div>
     <div class="au-step" id="rp-step">PASO 0 DE 12</div>
-  </div>
-
-  <div class="rp-modes">
-    <button class="rp-mode-btn on" id="rpModeStep">Documento a documento</button>
-    <button class="rp-mode-btn" id="rpModePop">Población completa (2.600)</button>
   </div>
 
   <div id="rp-stepmode">
@@ -389,37 +398,28 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 
     <div class="au-counters" id="rp-counters"></div>
 
-    <div class="repro-actions" style="margin-top:12px">
-      <button class="repro-btn ghost" id="rpReplay">Reproducir de nuevo</button>
-      <button class="repro-btn ghost" id="rpSkip">Ir al final</button>
+    <div class="rp-transport" role="group" aria-label="Controles de reproducción">
+      <button class="tp-btn" id="rpFirst" type="button" title="Volver al inicio" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zM20 6v12L9 12z"/></svg></button>
+      <button class="tp-btn" id="rpBack" type="button" title="Retroceder" aria-label="Retroceder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6v12L2 12zM22 6v12l-9-6z"/></svg></button>
+      <button class="tp-btn primary" id="rpPlay" type="button" title="Reproducir" aria-label="Reproducir"><svg id="rp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg></button>
+      <button class="tp-btn" id="rpFwd" type="button" title="Avanzar" aria-label="Avanzar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6l9 6-9 6zM13 6l9 6-9 6z"/></svg></button>
+      <button class="tp-btn" id="rpLast" type="button" title="Ir al final" aria-label="Ir al final"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM4 6l11 6L4 18z"/></svg></button>
+      <div class="tp-sep"></div>
+      <div class="tp-speed" id="rpSpeed" role="group" aria-label="Velocidad de reproducción">
+        <button type="button" data-s="1" class="on">1×</button>
+        <button type="button" data-s="4">4×</button>
+        <button type="button" data-s="12">12×</button>
+        <button type="button" data-s="24">24×</button>
+      </div>
+      <div class="tp-sep"></div>
       <button class="fit-btn" type="button" onclick="window.__fitAll()">Ajustar a pantalla</button>
+      <div class="tp-prog"><div class="tp-bar"><i id="rp-prog"></i></div><span class="tp-count" id="rp-count">0 de 2.600</span></div>
       <button class="repro-btn" id="rpExplore">Explorar los 7 controles →</button>
     </div>
-    <div class="au-note">Recorrido ilustrativo de 12 documentos. La población completa registra 2.600 documentos: 2.080 conformes, 388 desviaciones y 132 excepciones. Cambia al modo Población completa para verla fluir.</div>
+    <div class="au-note">Recorrido de la población completa: 2.600 documentos, 2.080 conformes, 388 desviaciones gestionadas y 132 excepciones. Los hallazgos provienen de la fuente vigente del tablero; los conformes son ilustrativos hasta cargar el extracto de Arbutus. Los colectores y las filas laterales llevan a los datos.</div>
+    <div id="repro-breakdown" class="repro-breakdown"></div>
   </div>
 
-  <div id="rp-popmode" style="display:none">
-    <div class="repro-wrap">
-      <div style="font-size:12px;color:var(--muted);text-align:center;max-width:640px;line-height:1.6">La población completa recorre el ciclo. Cada documento se clasifica en <span style="color:var(--ok)">conforme</span>, <span style="color:var(--warn)">desviación gestionada</span> o <span style="color:var(--crit)">excepción</span>. Los colectores son clickeables.</div>
-      <div class="repro-stage"><canvas id="reproCanvas"></canvas></div>
-      <div class="repro-actions">
-        <button class="repro-btn ghost" id="reproReplay">Reproducir de nuevo</button>
-        <button class="fit-btn" type="button" onclick="window.__fitAll()">Ajustar a pantalla</button>
-        <button class="repro-btn" id="reproExplore">Explorar los 7 controles →</button>
-      </div>
-      <div id="repro-breakdown" class="repro-breakdown"></div>
-    </div>
-  </div>
-
-  <!-- P2P-RISK-01 · análisis de patrones, lectura operativa del ciclo -->
-  <div class="panel pat-host" id="pat-ciclo-host">
-    <div class="panel-hdr">
-      <span class="panel-title">Análisis de patrones · lectura operativa del ciclo</span>
-      <select id="pat-ciclo-sel" onchange="mountPatCiclo()" aria-label="Objetivo de control"></select>
-    </div>
-    <div class="pat-ctx">Los patrones se leen aquí sobre la secuencia del proceso: en qué etapa se origina el hallazgo, qué transacciones lo acompañan y en qué ventana temporal se concentran. La misma información se presenta en el Mapa desde la óptica de exposición al riesgo.</div>
-    <div id="pat-ciclo-body"></div>
-  </div>
 </div>
 
 <div id="view-resumen" class="view">
@@ -514,12 +514,25 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 
   <div class="au-counters" id="au-counters"></div>
 
-  <div class="repro-actions" style="margin-top:12px">
-    <button class="repro-btn ghost" id="auReplay">Reproducir de nuevo</button>
-    <button class="repro-btn ghost" id="auSkip">Ir al final</button>
+  <div class="rp-transport" role="group" aria-label="Controles de reproducción">
+    <button class="tp-btn" id="auFirst" type="button" title="Volver al inicio" aria-label="Volver al inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h2v12H6zM20 6v12L9 12z"/></svg></button>
+    <button class="tp-btn" id="auBack" type="button" title="Retroceder" aria-label="Retroceder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6v12L2 12zM22 6v12l-9-6z"/></svg></button>
+    <button class="tp-btn primary" id="auPlay" type="button" title="Reproducir" aria-label="Reproducir"><svg id="au-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg></button>
+    <button class="tp-btn" id="auFwd" type="button" title="Avanzar" aria-label="Avanzar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6l9 6-9 6zM13 6l9 6-9 6z"/></svg></button>
+    <button class="tp-btn" id="auLast" type="button" title="Ir al final" aria-label="Ir al final"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 6h2v12h-2zM4 6l11 6L4 18z"/></svg></button>
+    <div class="tp-sep"></div>
+    <div class="tp-speed" id="auSpeed" role="group" aria-label="Velocidad de reproducción">
+      <button type="button" data-s="1" class="on">1×</button>
+      <button type="button" data-s="4">4×</button>
+      <button type="button" data-s="12">12×</button>
+      <button type="button" data-s="24">24×</button>
+    </div>
+    <div class="tp-sep"></div>
+    <button class="fit-btn" type="button" onclick="window.__fitAll()">Ajustar a pantalla</button>
+    <div class="tp-prog"><div class="tp-bar"><i id="au-prog"></i></div><span class="tp-count" id="au-count">0 de 0</span></div>
     <button class="repro-btn" id="auDrill">Ver el universo de C2 →</button>
   </div>
-  <div class="au-note">Recorrido ilustrativo de 12 órdenes de compra. El universo completo del control C2 registra 8 excepciones y 40 desviaciones sobre la población de 2.600 documentos; el botón anterior abre esas transacciones para documentarlas.</div>
+  <div class="au-note">Universo: los documentos con pago ejecutado, es decir los que atraviesan la etapa de Pago. Incluye los conformes, las desviaciones gestionadas y las excepciones cuyo defecto se materializa en el desembolso (C2 autoridad insuficiente, C5 duplicado, C6 anticipo sin respaldo). Quedan fuera las excepciones de C1, C3, C4 y C7, que no llegan a pago. Los niveles de liberación registrados se derivan de la política DoA y de los hallazgos de C2; en producción deben provenir de EKKO y CDHDR / CDPOS.</div>
 </div>
 
 <div id="view-focos" class="view">
@@ -865,7 +878,6 @@ function exportCSV(){
    El mismo componente se monta en tres contextos con ámbitos independientes:
      · 'ex-<i>'    → tabla de transacciones (vista Controles)
      · 'drill-<i>' → panel de drill-down    (vista Controles)
-     · 'ciclo'     → lectura operativa      (vista Ciclo)
      · 'mapa'      → lectura de riesgo      (vista Mapa)
    No se duplican consultas ni cálculos: cada montaje reutiliza las mismas
    funciones puras sobre el mismo arreglo en memoria. */
@@ -914,19 +926,12 @@ function patSelectorHTML(id){
   return `<select id="${id}" aria-label="Objetivo de control">`+
     CTRLS.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')+`</select>`;
 }
-function mountPatCiclo(){
-  const sel=document.getElementById('pat-ciclo-sel');
-  const host=document.getElementById('pat-ciclo-body');
-  if(!sel||!host)return;
-  mountPatterns(host,Number(sel.value||0),'ciclo','time');
-}
 function mountPatMapa(){
   const sel=document.getElementById('pat-mapa-sel');
   const host=document.getElementById('pat-mapa-body');
   if(!sel||!host)return;
   mountPatterns(host,Number(sel.value||0),'mapa','prov');
 }
-window.mountPatCiclo=mountPatCiclo;
 window.mountPatMapa=mountPatMapa;
 function patProv(rows,col){
   const g={}; rows.forEach(r=>{const u=parseMonto(r.monto);(g[r.lifnr]=g[r.lifnr]||{n:0,usd:0});g[r.lifnr].n++;g[r.lifnr].usd+=u;});
@@ -1248,6 +1253,115 @@ function buildPoblacion(){
   window.USD_EXC=USD_EXC;window.USD_DESV=USD_DESV;window.USD_TOTAL=USD_TOTAL;   // para la animación
   STATE_TOT.exc.usd=USD_EXC;STATE_TOT.desv.usd=USD_DESV;   // cuadratura con exploración y desglose
 }
+/* =========================================================================
+   ARCHIVO: index.html · BLOQUE: población completa para las animaciones
+   Fuente única. Los 520 hallazgos (132 excepciones + 388 desviaciones)
+   provienen de FOCUS_TX, la misma fuente que alimentan Focos, Controles y
+   Mapa. Los 2.080 conformes se generan con un generador determinista.
+
+   ADVERTENCIA: los conformes son de relleno ilustrativo. Deben sustituirse
+   por el extracto real de Arbutus antes de presentar el tablero al cliente.
+   Los hallazgos sí son la fuente vigente del tablero.
+   ========================================================================= */
+let POB_ANIM=null, AU_POB=null;
+
+const AN_TPL={
+  C1:{exc:'<b>Excepción.</b> La orden de compra se emitió sin requisición autorizada previa. No hay evidencia de que la compra fuera solicitada por quien podía hacerlo.',
+      desv:'<b>Desviación gestionada.</b> La orden se regularizó con una requisición posterior. Existe respaldo documental, pero fuera de secuencia.'},
+  C2:{exc:'<b>Excepción.</b> La orden superó su umbral sin el nivel de aprobación que exige la política. Salió efectivo sin la autoridad correspondiente.',
+      desv:'<b>Desviación gestionada.</b> Se liberó con un nivel de los dos que exige el monto. Hay rastro de aprobación, pero incompleto.'},
+  C3:{exc:'<b>Excepción.</b> El proveedor no existe en el maestro (LFA1 / LFB1) o está bloqueado. Se operó con una contraparte no habilitada.',
+      desv:'<b>Desviación gestionada.</b> El proveedor está activo, pero sus datos maestros presentan inconsistencias.'},
+  C4:{exc:'<b>Excepción.</b> Se registró la factura sin entrada de mercadería o fuera de tolerancia. El 3-Way Match no puede completarse: se paga algo que nadie confirmó haber recibido.',
+      desv:'<b>Desviación gestionada.</b> Hay diferencia entre factura y recepción, pero cae dentro de la tolerancia acordada. Se documenta y no escala.'},
+  C5:{exc:'<b>Excepción.</b> Misma referencia y mismo importe que una factura ya contabilizada. Riesgo directo de doble pago de la misma obligación.',
+      desv:'<b>Desviación gestionada.</b> Similitud parcial con otra factura. Revisada y descartada como duplicado.'},
+  C6:{exc:'<b>Excepción.</b> Se ejecutó un anticipo sin orden de compra ni recepción asociada. No hay obligación que respalde la salida de efectivo.',
+      desv:'<b>Desviación gestionada.</b> Pago anticipado con respaldo contractual y términos válidos.'},
+  C7:{exc:'<b>Excepción.</b> Orden de inversión sin activo fijo en ANLA ni partida presupuestaria asociada.',
+      desv:'<b>Desviación gestionada.</b> La orden de inversión no tiene activo asociado en ANLA. El gasto está presupuestado, pero la trazabilidad contable queda incompleta.'}
+};
+
+/* Población de 2.600 documentos, barajada de forma determinista. */
+function buildPobAnim(){
+  if(POB_ANIM)return POB_ANIM;
+  buildPoblacion();
+  let s=987654321; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+  const hall=FOCUS_TX.map(t=>({
+    d:t.ebeln, m:t.monto, out:R2S[t.riesgo], c:t.ctrl, mot:t.desc,
+    an:AN_TPL[t.ctrl][R2S[t.riesgo]]
+  }));
+  const conf=[];
+  for(let k=0;k<STATE_TOT.conf.n;k++){
+    const m=Math.round(300+Math.pow(rnd(),2.2)*51700);   // sesgo hacia montos bajos
+    conf.push({d:'450001'+String(1000+Math.floor(rnd()*8999)), m, out:'con'});
+  }
+  const all=hall.concat(conf);
+  for(let i=all.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));const t=all[i];all[i]=all[j];all[j]=t;}
+  POB_ANIM=all;
+  console.log(`[P2P] población de animación: ${all.length} documentos `+
+    `(${all.filter(o=>o.out==='con').length} conformes, ${all.filter(o=>o.out==='desv').length} desviaciones, ${all.filter(o=>o.out==='exc').length} excepciones)`);
+  return POB_ANIM;
+}
+
+/* =========================================================================
+   Universo de Autorizaciones: documentos con pago ejecutado.
+   Regla aplicada, sujeta a confirmación del responsable del tablero:
+     · los 2.080 conformes (atraviesan la etapa de Pago);
+     · las 388 desviaciones gestionadas (se pagan con respaldo);
+     · las excepciones cuyo defecto se materializa en el pago: C5 duplicado,
+       C6 anticipo sin respaldo, y C2 liberación con autoridad insuficiente.
+   Quedan fuera las excepciones de C1, C3, C4 y C7: no llegan a pago.
+   Los niveles de liberación registrados (got) se derivan de la política DoA
+   y de los hallazgos de C2. En producción deben provenir de EKKO y CDHDR / CDPOS.
+   ========================================================================= */
+const DOA_LVL=m=>m<=5000?1:m<=25000?2:m<=100000?3:4;
+
+function buildAuPob(){
+  if(AU_POB)return AU_POB;
+  const pob=buildPobAnim();
+  let s=555000111; const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+  const fmt=n=>Math.round(n).toLocaleString('es-EC');
+  const res=[];
+
+  // 1. Hallazgos de C2: el defecto está en la liberación
+  FOCUS_TX.filter(t=>t.ctrl==='C2').forEach(t=>{
+    const req=DOA_LVL(t.monto);
+    if(t.riesgo==='CRITICO'){
+      const got=[]; for(let n=1;n<req;n++)got.push(n);
+      const alcanzado=got.length?`N${got[got.length-1]}`:'ningún nivel';
+      res.push({oc:t.ebeln, amt:t.monto, got, out:'exc', falta:req,
+        mot:got.length?`aprobó N${got[got.length-1]} · exigía N${req}`:'sin aprobación registrada',
+        an:`<b>Autoridad insuficiente.</b> USD ${fmt(t.monto)} liberada con ${alcanzado}. Falta el anillo de N${req} que exige la política.`});
+    } else {
+      const to=Math.max(300,Math.round(t.monto*(0.6+rnd()*0.25)));
+      const got=[]; for(let n=1;n<=DOA_LVL(to);n++)got.push(n);
+      res.push({oc:t.ebeln, amt:t.monto, got, out:'rep', reproc:{to,at:req},
+        mot:`ajuste ${fmt(t.monto)} → ${fmt(to)}`,
+        an:`<b>Reprocesada.</b> Rechazada en N${req}. El monto se ajusta de USD ${fmt(t.monto)} a USD ${fmt(to)} y se reenvía; vuelve a liberarse en el nivel correcto. Es una desviación gestionada, no una excepción.`});
+    }
+  });
+
+  // 2. Conformes de la población: liberación completa según monto
+  pob.filter(o=>o.out==='con').forEach(o=>{
+    const req=DOA_LVL(o.m), got=[]; for(let n=1;n<=req;n++)got.push(n);
+    res.push({oc:o.d, amt:o.m, got, out:'con', mot:`N${req} correcto`});
+  });
+
+  // 3. Resto de documentos con pago: desviaciones de otros controles y excepciones C5 / C6
+  FOCUS_TX.filter(t=>t.ctrl!=='C2' && (t.riesgo==='ADVERTENCIA' || t.ctrl==='C5' || t.ctrl==='C6')).forEach(t=>{
+    const req=DOA_LVL(t.monto), got=[]; for(let n=1;n<=req;n++)got.push(n);
+    res.push({oc:t.ebeln, amt:t.monto, got, out:'con', mot:`N${req} correcto · liberación conforme`});
+  });
+
+  for(let i=res.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));const t=res[i];res[i]=res[j];res[j]=t;}
+  AU_POB=res;
+  console.log(`[P2P] universo de autorizaciones: ${res.length} documentos con pago `+
+    `(${res.filter(o=>o.out==='exc').length} autoridad insuficiente, ${res.filter(o=>o.out==='rep').length} reprocesadas)`);
+  return AU_POB;
+}
+window.buildPobAnim=buildPobAnim; window.buildAuPob=buildAuPob;
+
 function coverageAt(pct){
   const n=Math.max(1,Math.round(POB_TOTAL*pct/100));
   const nn=Math.min(n,FOCUS_TX.length);
@@ -1368,10 +1482,8 @@ window.navBtn=navBtn;
 /* Poblado de los selectores de control de los paneles de patrones (Ciclo y Mapa) */
 (function initPatSelectors(){
   const opts=CTRLS.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('');
-  const a=document.getElementById('pat-ciclo-sel'), b=document.getElementById('pat-mapa-sel');
-  if(a){a.innerHTML=opts;a.value='3';}   // C4 · 3-Way Match, el de mayor exposición
-  if(b){b.innerHTML=opts;b.value='3';}
-  if(typeof mountPatCiclo==='function')mountPatCiclo();
+  const b=document.getElementById('pat-mapa-sel');
+  if(b){b.innerHTML=opts;b.value='3';}   // C4 · 3-Way Match, el de mayor exposición
 })();
 
 function showView(id,btn){
@@ -1381,15 +1493,13 @@ function showView(id,btn){
   if(btn)btn.classList.add('active');
   if(id==='seguimiento')renderSeguimiento();
   if(id==='reproduccion'){
-    const sm=document.getElementById('rp-stepmode');
-    if(sm&&sm.style.display!=='none'){if(window.__rpReset)window.__rpReset();}
-    else {if(window.__reproResize)window.__reproResize();renderBreakdown();}
-    mountPatCiclo();                       // P2P-RISK-01
+    if(window.__rpEnsure)window.__rpEnsure();   // remide y repinta; no reinicia el recorrido
+    renderBreakdown();
   }
   if(id==='controles')renderExplore();
   if(id==='riesgo'){renderRiesgo();mountPatMapa();}   // P2P-RISK-01
   if(id==='focos')renderFocos();
-  if(id==='autorizaciones'&&window.__auReset)window.__auReset();
+  if(id==='autorizaciones'&&window.__auEnsure)window.__auEnsure();
   // P2P-VIS-01: al activar una vista, el canvas ya es medible; se reajusta.
   if(window.P2PRT)requestAnimationFrame(()=>P2PRT.fitAll());
 }
@@ -1564,6 +1674,7 @@ window.P2PRT = (() => {
       try { cont = frame(ts); }
       catch (err){ stop(key); fail(key, err); return; }
       if (cont === false){ loops.delete(key); return; }
+      if (!loops.has(key)) return;   // el propio frame llamó a stop(): no resucitar el bucle
       loops.set(key, requestAnimationFrame(step));
     };
     loops.set(key, requestAnimationFrame(step));
@@ -1681,201 +1792,6 @@ window.P2PRT = (() => {
 window.__fitAll = () => window.P2PRT.fitAll();
 </script>
 <script>
-/* ===== Animación de reproducción: recorrido end-to-end del flujo P2P ===== */
-(() => {
-  "use strict";
-  const cvs=document.getElementById('reproCanvas'); if(!cvs) return;
-  const ctx=cvs.getContext('2d');
-  const KEY='ciclo-poblacion';
-  const CO={bg0:'#081221',bg1:'#0b1a30',ink:'#e2e8f0',dim:'#7d95b0',faint:'#4c627e',
-    line:'rgba(255,255,255,0.10)',rail:'rgba(120,150,190,0.28)',accent:'#2a8fff',
-    conf:'#22c55e',desv:'#f59e0b',exc:'#ef4444',neutral:'#8aa0bb'};
-  const stCol=s=>({conf:CO.conf,desv:CO.desv,exc:CO.exc}[s]||CO.neutral);
-  const money=n=>'USD '+Math.round(n).toLocaleString('es-EC');
-  const num=n=>Math.round(n).toLocaleString('es-EC');
-  const STAGES=[
-    {n:'Solicitud',t:'ME51N'},
-    {n:'Liberación',t:'ME29N',ctrl:'C2'},
-    {n:'Orden de compra',t:'ME21N',ctrl:'C1 · C7'},
-    {n:'Recepción',t:'MIGO',ctrl:'C3'},
-    {n:'3-Way Match',t:'MIRO',ctrl:'C4'},
-    {n:'Pago',t:'F110',ctrl:'C5/C6'}
-  ];
-  const TARGET={conf:2080,desv:388,exc:132,total:2600,usdDesv:window.USD_DESV||23300,usdExc:window.USD_EXC||108900};
-  const DESV_AT=[1,2,3,4], EXC_AT=[1,3,4,5]; // estaciones donde se bifurcan
-
-  let W,H,DPR,L={};
-  // P2P-VIS-01: la altura se limita al alto útil de la ventana para que el ciclo
-  // completo entre en una sola pantalla, con un mínimo que preserva la legibilidad.
-  function size(){
-    const host=cvs.parentElement;
-    const cw=Math.max(320,Math.min(P2PRT.hostWidth(host,900),940));
-    const maxH=P2PRT.availableHeight(host,150,300);
-    W=cw; H=Math.max(300,Math.min(Math.round(cw*0.60),maxH));
-    DPR=Math.min(window.devicePixelRatio||1,2);
-    if(!W||!H)return;                                  // tamaño inválido: no dibujar
-    cvs.width=Math.round(W*DPR);cvs.height=Math.round(H*DPR);cvs.style.height=H+'px';
-    ctx.setTransform(DPR,0,0,DPR,0,0);layout();
-  }
-  function layout(){
-    const px=28; L.px=px;
-    L.y0=Math.round(H*0.50);
-    L.colX=W-px-150;                       // x donde están los colectores
-    const xFirst=px+70, xLast=L.colX-70;
-    L.st=STAGES.map((s,i)=>({...s,x:Math.round(xFirst+(xLast-xFirst)*(i/(STAGES.length-1))),y:L.y0}));
-    L.entry={x:px,y:L.y0};
-    L.colConf={x:L.colX,y:L.y0};
-    L.colDesv={x:L.colX,y:Math.round(H*0.145)};
-    L.colExc ={x:L.colX,y:Math.round(H*0.855)};
-    L.headerH=54;
-  }
-
-  // --- rutas (waypoints) ---
-  function railTo(k){ const p=[{...L.entry}]; for(let i=0;i<=k;i++)p.push({x:L.st[i].x,y:L.y0}); return p; }
-  function routeConf(){ const p=railTo(STAGES.length-1); p.push({x:L.colConf.x,y:L.y0}); return {pts:p,bif:p.length-1}; }
-  function routeBranch(k,col){ const p=railTo(k); const sx=L.st[k].x;
-    p.push({x:sx+24,y:L.y0});
-    p.push({x:L.colX-46,y:col.y});
-    p.push({x:col.x,y:col.y});
-    return {pts:p,bif:p.length-3}; }
-
-  // --- estado ---
-  let tokens=[],counts={conf:0,desv:0,exc:0},shown={conf:0,desv:0,exc:0},usd={desv:0,exc:0};
-  let plan=[],pIdx=0,running=false,finished=false,startT=0,lastT=0,nextEmit=0,seed=0,pulseArr=[];
-  const SPEED=235;
-  function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
-  function pick(a){return a[Math.floor(rnd()*a.length)];}
-  function buildPlan(){
-    const pl=[]; const push=(cls,n)=>{let l=n;while(l>0){const q=Math.min(l,cls==='conf'?42:cls==='desv'?22:12);pl.push({cls,n:q});l-=q;}};
-    push('conf',TARGET.conf);push('desv',TARGET.desv);push('exc',TARGET.exc);
-    for(let i=pl.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[pl[i],pl[j]]=[pl[j],pl[i]];}
-    return pl;
-  }
-  function reset(){
-    seed=20260708; tokens=[];counts={conf:0,desv:0,exc:0};shown={conf:0,desv:0,exc:0};usd={desv:0,exc:0};
-    plan=buildPlan();pIdx=0;finished=false;startT=0;lastT=0;nextEmit=0.15;pulseArr=[];
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){counts={...TARGET};shown={...counts};usd={desv:TARGET.usdDesv,exc:TARGET.usdExc};finished=true;}
-  }
-  function emit(){
-    const lot=plan[pIdx++]; let route,bifK=null;
-    if(lot.cls==='conf')route=routeConf();
-    else if(lot.cls==='desv'){bifK=pick(DESV_AT);route=routeBranch(bifK,L.colDesv);}
-    else {bifK=pick(EXC_AT);route=routeBranch(bifK,L.colExc);}
-    const jitter=(rnd()-0.5)*10;
-    const pts=route.pts.map((p,idx)=>idx===0?{x:p.x,y:p.y+jitter}:{x:p.x,y:p.y+(idx<route.bif?jitter:0)});
-    tokens.push({cls:lot.cls,share:lot.n,pts,bif:route.bif,i:0,d:0,r:6.5,done:false});
-  }
-  function seg(t){return {a:t.pts[t.i],b:t.pts[t.i+1]};}
-  function segLen(t){const {a,b}=seg(t);return Math.hypot(b.x-a.x,b.y-a.y)||1;}
-  function pos(t){const {a,b}=seg(t);const u=t.d/segLen(t);return {x:a.x+(b.x-a.x)*u,y:a.y+(b.y-a.y)*u};}
-  function classify(t){counts[t.cls]+=t.share; const col= t.cls==='conf'?L.colConf:t.cls==='desv'?L.colDesv:L.colExc;
-    pulseArr.push({x:col.x,y:col.y,c:stCol(t.cls),t:0});}
-  function update(dt,now){
-    if(pIdx<plan.length&&now>=nextEmit){emit();if(pIdx<plan.length)emit();nextEmit=now+0.09;}
-    for(const t of tokens){
-      if(t.done)continue;
-      t.d+=SPEED*dt;
-      let sl=segLen(t);
-      while(t.d>=sl && t.i<t.pts.length-2){t.d-=sl;t.i++;sl=segLen(t);}
-      if(t.i>=t.pts.length-2 && t.d>=sl){t.done=true;classify(t);}
-    }
-    tokens=tokens.filter(t=>!t.done);
-    for(const k in counts)shown[k]+=(counts[k]-shown[k])*Math.min(1,dt*6);
-    const prog=Math.min(1,(shown.conf+shown.desv+shown.exc)/TARGET.total);
-    usd.desv=TARGET.usdDesv*prog;usd.exc=TARGET.usdExc*prog;
-    pulseArr.forEach(p=>p.t+=dt*2.5);pulseArr=pulseArr.filter(p=>p.t<1);
-    if(!finished&&pIdx>=plan.length&&tokens.length===0&&Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)<3){
-      finished=true;
-      shown={conf:TARGET.conf,desv:TARGET.desv,exc:TARGET.exc};   // snap exacto: evita 2.079 / 2.599
-      usd.desv=TARGET.usdDesv;usd.exc=TARGET.usdExc;
-    }
-  }
-  function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
-
-  function drawRails(){
-    // rail principal
-    ctx.strokeStyle=CO.rail;ctx.lineWidth=5;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(L.entry.x,L.y0);
-    L.st.forEach(s=>ctx.lineTo(s.x,L.y0));ctx.lineTo(L.colConf.x,L.y0);ctx.stroke();
-    // ramas guía
-    ctx.lineWidth=2;ctx.setLineDash([3,6]);
-    DESV_AT.forEach(k=>{ctx.strokeStyle='rgba(245,158,11,0.30)';ctx.beginPath();
-      ctx.moveTo(L.st[k].x,L.y0);ctx.lineTo(L.st[k].x+24,L.y0);ctx.lineTo(L.colX-46,L.colDesv.y);ctx.lineTo(L.colDesv.x,L.colDesv.y);ctx.stroke();});
-    EXC_AT.forEach(k=>{ctx.strokeStyle='rgba(239,68,68,0.30)';ctx.beginPath();
-      ctx.moveTo(L.st[k].x,L.y0);ctx.lineTo(L.st[k].x+24,L.y0);ctx.lineTo(L.colX-46,L.colExc.y);ctx.lineTo(L.colExc.x,L.colExc.y);ctx.stroke();});
-    ctx.setLineDash([]);
-    // estaciones
-    L.st.forEach((s,i)=>{
-      ctx.fillStyle='#0c1a30';ctx.strokeStyle=s.ctrl?CO.accent:CO.rail;ctx.lineWidth=2;
-      ctx.beginPath();ctx.arc(s.x,L.y0,s.ctrl?9:7,0,7);ctx.fill();ctx.stroke();
-      ctx.textAlign='center';
-      ctx.fillStyle=CO.ink;ctx.font='600 12px system-ui';ctx.fillText(s.n,s.x,L.y0-26);
-      ctx.fillStyle=CO.dim;ctx.font='600 9px monospace';ctx.fillText(s.t,s.x,L.y0+20);
-      if(s.ctrl){ctx.fillStyle=CO.accent;ctx.font='700 8px monospace';ctx.fillText('control '+s.ctrl,s.x,L.y0+32);}
-    });
-    ctx.textAlign='left';
-    // entrada
-    ctx.fillStyle=CO.faint;ctx.font='600 9px monospace';ctx.fillText('ENTRADA',L.entry.x,L.y0-14);
-  }
-  function drawCollector(col,key,title){
-    const c=stCol(key),bw=140,bh=64,x=col.x-8,y=col.y-bh/2;
-    ctx.fillStyle='rgba(15,32,56,0.85)';ctx.strokeStyle=c;ctx.lineWidth=1.5;rr(x,y,bw,bh,9);ctx.fill();ctx.stroke();
-    ctx.fillStyle=c;rr(x,y,4,bh,2);ctx.fill();
-    ctx.textAlign='left';
-    ctx.fillStyle=c;ctx.font='700 10px system-ui';ctx.fillText(title,x+12,y+17);
-    ctx.fillStyle=CO.ink;ctx.font='700 22px system-ui';ctx.fillText(num(shown[key]),x+12,y+40);
-    if(key==='conf'){ctx.fillStyle=CO.faint;ctx.font='500 9px monospace';ctx.fillText(((shown.conf/TARGET.total)*100||0).toFixed(1)+'% población',x+12,y+55);}
-    else{ctx.fillStyle=c;ctx.font='600 11px monospace';ctx.fillText(money(key==='exc'?usd.exc:usd.desv),x+12,y+55);}
-    ctx.fillStyle=CO.faint;ctx.font='500 8px monospace';ctx.textAlign='right';ctx.fillText('clic ↗',x+bw-10,y+14);ctx.textAlign='left';
-  }
-  function draw(now){
-    const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,CO.bg1);g.addColorStop(1,CO.bg0);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    // header (solo estado; el branding ya está en el topbar)
-    ctx.textBaseline='alphabetic';ctx.textAlign='left';
-    const lab=finished?'RECORRIDO COMPLETO':'PROCESANDO';ctx.font='600 11px monospace';const lw=ctx.measureText(lab).width;
-    const pulse=finished?1:.5+.5*Math.sin(now*4);ctx.fillStyle=finished?CO.conf:`rgba(42,143,255,${.4+.6*pulse})`;
-    ctx.beginPath();ctx.arc(W-L.px-lw-13,22,5,0,7);ctx.fill();ctx.fillStyle=finished?CO.conf:CO.dim;ctx.fillText(lab,W-L.px-lw,26);
-    drawRails();
-    // colectores
-    drawCollector(L.colDesv,'desv','DESVIACIONES');
-    drawCollector(L.colExc,'exc','EXCEPCIONES');
-    drawCollector(L.colConf,'conf','CONFORMES');
-    // pulsos al entrar a colector
-    pulseArr.forEach(p=>{ctx.strokeStyle=p.c;ctx.globalAlpha=1-p.t;ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,6+p.t*16,0,7);ctx.stroke();});ctx.globalAlpha=1;
-    // tokens
-    for(const t of tokens){const p=pos(t);const c=t.i>=t.bif?stCol(t.cls):CO.neutral;
-      ctx.save();ctx.shadowColor=c;ctx.shadowBlur=9;ctx.fillStyle=c;ctx.beginPath();ctx.arc(p.x,p.y,t.r,0,7);ctx.fill();ctx.restore();}
-    // pie: totales + leyenda
-    const prog=Math.min(1,(shown.conf+shown.desv+shown.exc)/TARGET.total),fy=H-16;
-    ctx.fillStyle=CO.ink;ctx.font='700 15px system-ui';ctx.fillText(num(TARGET.total*prog)+' documentos',L.px,fy);
-    ctx.fillStyle=CO.exc;ctx.font='700 15px system-ui';
-    const t2=money((TARGET.usdDesv+TARGET.usdExc)*prog)+' en riesgo';
-    ctx.fillText(t2,L.px+ctx.measureText(num(TARGET.total*prog)+' documentos').width+18,fy);
-    // leyenda derecha
-    const items=[['conf','Conforme'],['desv','Desviación'],['exc','Excepción']];let lx=L.px;const ly=H-34;
-    ctx.font='500 11px system-ui';
-    items.forEach(([k,lab2])=>{ctx.fillStyle=stCol(k);ctx.beginPath();ctx.arc(lx+5,ly-4,5,0,7);ctx.fill();
-      ctx.fillStyle=CO.dim;ctx.fillText(lab2,lx+15,ly);lx+=18+ctx.measureText(lab2).width+18;});
-  }
-  // El bucle ya no se reprograma a sí mismo: lo administra P2PRT (propietario único).
-  function frame(ts){if(!running)return false;if(!W||!H)return;
-    if(!startT){startT=ts;lastT=ts;}const now=(ts-startT)/1000;let dt=(ts-lastT)/1000;lastT=ts;dt=Math.min(dt,0.05);
-    if(!finished||pulseArr.length||Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)>=3)update(dt,now);draw(now);}
-  function start(){running=true;startT=0;lastT=0;P2PRT.start(KEY,frame);}
-  window.__reproReset=()=>{size();reset();start();};
-  window.__reproResize=()=>{size();};
-  const rb=document.getElementById('reproReplay');if(rb)rb.onclick=()=>{size();reset();start();};
-  const eb=document.getElementById('reproExplore');if(eb)eb.onclick=()=>{if(window.__goExplore)window.__goExplore();};
-  function hitAt(x,y){const test=col=>{const bw=140,bh=64,bx=col.x-8,by=col.y-bh/2;return x>=bx&&x<=bx+bw&&y>=by&&y<=by+bh;};
-    if(test(L.colDesv))return 'desv';if(test(L.colExc))return 'exc';if(test(L.colConf))return 'conf';return null;}
-  function canvasXY(e){const rect=cvs.getBoundingClientRect();return {x:(e.clientX-rect.left)*(W/rect.width),y:(e.clientY-rect.top)*(H/rect.height)};}
-  cvs.addEventListener('click',e=>{const {x,y}=canvasXY(e);const s=hitAt(x,y);if(s&&window.__goExploreState)window.__goExploreState(s);});
-  cvs.addEventListener('mousemove',e=>{const {x,y}=canvasXY(e);cvs.style.cursor=hitAt(x,y)?'pointer':'default';});
-  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
-  size();reset();start();
-})();
-</script>
-<script>
 /* ===== Autorizaciones · Política DoA vs liberaciones registradas ===== */
 (() => {
   "use strict";
@@ -1895,31 +1811,19 @@ window.__fitAll = () => window.P2PRT.fitAll();
   const money=n=>'USD '+Math.round(n).toLocaleString('es-EC');
 
   // 12 órdenes: got = niveles que efectivamente liberaron (CDHDR/CDPOS)
-  const OCS=[
-    {oc:'4500011794',amt:4200 ,got:[1]      ,out:'con',mot:'N1 correcto'},
-    {oc:'4500011591',amt:9500 ,got:[1,2]    ,out:'con',mot:'N2 correcto'},
-    {oc:'4500012030',amt:7400 ,got:[1]      ,out:'exc',mot:'aprobó N1 · exigía N2',falta:2,
-      an:'<b>Autoridad insuficiente.</b> USD 7.400 liberada solo por el Jefe de Área. Le falta el anillo del Gerente de División que exige la política.'},
-    {oc:'4500011375',amt:2100 ,got:[1]      ,out:'con',mot:'N1 correcto'},
-    {oc:'4500011477',amt:18000,got:[1,2]    ,out:'rep',mot:'ajuste 18.000 → 14.000',reproc:{to:14000,at:2},
-      an:'<b>Reprocesada.</b> Rechazada en N2, el monto se ajusta de USD 18.000 a USD 14.000 y se reenvía. Vuelve a liberarse en el nivel correcto: es una desviación gestionada, no una excepción.'},
-    {oc:'4500001904',amt:82000,got:[1,2]    ,out:'exc',mot:'aprobó N2 · exigía N3',falta:3,
-      an:'<b>Autoridad insuficiente.</b> USD 82.000 liberada por un Gerente de División, cuyo límite es USD 25.000. Falta el anillo del CFO.'},
-    {oc:'4500011231',amt:52000,got:[1,2,3]  ,out:'con',mot:'N3 correcto'},
-    {oc:'4500001679',amt:27000,got:[1,2]    ,out:'exc',mot:'reingresa en 24.600 · evitó N3',reproc:{to:24600,at:3},
-      an:'<b>Fraccionamiento bajo umbral.</b> Rechazada en USD 27.000 por el CFO, reaparece en USD 24.600 — el 98% del umbral — y se aprueba un nivel más abajo. Un hallazgo que una muestra rara vez captura.'},
-    {oc:'4500011820',amt:140000,got:[1,2,3,4],out:'con',mot:'N4 correcto'},
-    {oc:'4500001988',amt:31000,got:[1,2]    ,out:'exc',mot:'34 días sin decisión',falta:3,pend:true,
-      an:'<b>Pendiente prolongada.</b> USD 31.000 lleva 34 días esperando la liberación del CFO. Sin decisión no hay control: se trata como excepción.'},
-    {oc:'4500011902',amt:52800,got:[1,2,3]  ,out:'rep',mot:'devuelta y reenviada · N3',reproc:{to:52800,at:3},
-      an:'<b>Reprocesada.</b> Devuelta por documentación incompleta y reenviada. La liberación final ocurre en el nivel que exige la política.'},
-    {oc:'4500011655',amt:18400,got:[1,2]    ,out:'con',mot:'N2 correcto'}
-  ];
+  // Universo real de la vista: documentos con pago ejecutado (ver buildAuPob)
+  const OCS=window.buildAuPob();
+  const TOTAL=OCS.length;
+  const MAXROWS=30, MAXPARKED=420;
+  const SUB=1/120, MAXSUB=48;
+
   const TOT_USD=OCS.reduce((s,o)=>s+(o.reproc?o.reproc.to:o.amt),0);
 
-  let W,H,DPR,L={},run=false,t0=0,last=0;
+  let W,H,DPR,L={},run=false,paused=true,t0=0,last=0,spd=1;
   let idx=-1,ph='idle',pt=0,sph=null,rings=[],flash=0;
   let cnt={con:0,rep:0,exc:0},usd=0,parked=[];
+  const nfmt=n=>n.toLocaleString('es-EC');
+  const narra=()=>spd<=4;   // por encima de 4x el relato individual no es legible
 
   function size(){
     const host=cvs.parentElement;
@@ -1940,23 +1844,69 @@ window.__fitAll = () => window.P2PRT.fitAll();
   const rad=a=>6+16*Math.sqrt(a/140000);
   const lvY=n=>L.y[n];
 
-  function reset(){
-    idx=-1;ph='idle';pt=0;sph=null;rings=[];flash=0;
-    cnt={con:0,rep:0,exc:0};usd=0;parked=[];
-    ['exc','rep','con'].forEach(k=>{const e=document.getElementById('au-list-'+k==='au-list-exc'?'':'');});
-    document.getElementById('au-list-exc').innerHTML='';
-    document.getElementById('au-list-rep').innerHTML='';
-    document.getElementById('au-list-con').innerHTML='';
-    ['exc','rep','con'].forEach(k=>document.getElementById('au-n-'+({exc:'exc',rep:'rep',con:'con'}[k])).textContent='0');
-    setAnalisis('Pulsa reproducir para recorrer las órdenes una a una.','');
-    step(0);renderCounters();
-    next();
+  function clearLists(){
+    ['exc','rep','con'].forEach(k=>{
+      const l=document.getElementById('au-list-'+k);if(l)l.innerHTML='';
+      const n=document.getElementById('au-n-'+k);if(n)n.textContent='0';
+    });
   }
-  function setAnalisis(html,cls){const e=document.getElementById('au-analisis');e.className='au-analisis '+(cls||'');e.innerHTML=html;}
-  function step(k){document.getElementById('au-step').textContent=`PASO ${k} DE ${OCS.length}`;}
+  /* Salto determinista: clasifica el tramo omitido sin animarlo. */
+  function seekTo(n){
+    n=Math.max(0,Math.min(TOTAL,n));
+    ph='idle';pt=0;sph=null;rings=[];flash=0;
+    cnt={con:0,rep:0,exc:0};usd=0;parked=[];
+    clearLists();
+    const tail=[];
+    for(let i=0;i<n;i++){const o=OCS[i];cnt[o.out]++;usd+=(o.reproc?o.reproc.to:o.amt);
+      if(i>=n-MAXROWS*3)tail.push(o);}
+    const cap=Math.min(MAXPARKED,n);
+    for(let i=0;i<cap;i++){const o=OCS[Math.floor(i*n/cap)],c=L.col[o.out];
+      parked.push({x:c.x+(Math.random()-.5)*40,y:c.y+18+(Math.random()-.5)*10,r:Math.max(3,rad(o.amt)*0.5),c:o.out});}
+    ['exc','rep','con'].forEach(k=>{
+      const el=document.getElementById('au-list-'+k);if(!el)return;
+      tail.filter(o=>o.out===k).slice(-MAXROWS).forEach(o=>{
+        const d=document.createElement('div');d.className='au-row';
+        d.innerHTML=`<span class="oc">OC ${o.oc}</span><span class="rz">${o.mot}</span>`;
+        if(k!=='con')d.onclick=()=>window.__drillTo&&window.__drillTo(1,k==='exc'?'exc':'desv');
+        else d.style.cursor='default';
+        el.insertBefore(d,el.firstChild);
+      });
+      const nn=document.getElementById('au-n-'+k);if(nn)nn.textContent=nfmt(cnt[k]);
+    });
+    idx=n-1;renderCounters();step();
+    if(n>=TOTAL){
+      ph='done';
+      setAnalisis(`<b>Universo cerrado.</b> ${nfmt(TOTAL)} aprobaciones de pago clasificadas: ${nfmt(cnt.con)} conformes, ${nfmt(cnt.rep)} reprocesadas y ${nfmt(cnt.exc)} con autoridad insuficiente. La política define cómo deberían ocurrir las cosas; los datos cuentan cómo ocurren.`,'ok');
+      pause();
+    } else {
+      setAnalisis(n?`Recorrido posicionado en la orden <b>${nfmt(n)}</b> de ${nfmt(TOTAL)}.`:'Pulsa reproducir para recorrer las aprobaciones de pago una a una.','');
+      next();
+    }
+    safeDraw();
+  }
+  const stepJump=()=>Math.max(1,Math.round(TOTAL*0.05));
+  function reset(){seekTo(0);}
+  let lastAn='';
+  function setAnalisis(html,cls){
+    if(html===lastAn)return;lastAn=html;
+    const e=document.getElementById('au-analisis');if(!e)return;
+    e.className='au-analisis '+(cls||'');e.innerHTML=html;
+  }
+  function agregado(){
+    setAnalisis(`Lectura agregada a ${spd}×. <b>${nfmt(cnt.con+cnt.rep+cnt.exc)}</b> de ${nfmt(TOTAL)} aprobaciones clasificadas · <b style="color:var(--crit)">${nfmt(cnt.exc)}</b> con autoridad insuficiente y <b style="color:var(--warn)">${nfmt(cnt.rep)}</b> reprocesadas. Baja a 1× para ver el detalle de cada orden.`,'');
+  }
+  function step(){
+    const done=cnt.con+cnt.rep+cnt.exc;
+    const e=document.getElementById('au-step');
+    if(e)e.textContent=`APROBACIÓN ${nfmt(done)} DE ${nfmt(TOTAL)}`;
+    const c=document.getElementById('au-count');
+    if(c)c.textContent=`${nfmt(done)} de ${nfmt(TOTAL)}`;
+    const b=document.getElementById('au-prog');
+    if(b)b.style.width=(done/TOTAL*100).toFixed(2)+'%';
+  }
   function renderCounters(){
     const c=document.getElementById('au-counters');if(!c)return;
-    const it=[[OCS.length,'órdenes',C.ink],[cnt.con,'conformes',C.ok],[cnt.rep,'reprocesadas',C.warn],[cnt.exc,'excepciones',C.crit],[money(usd),'monto revisado',C.accent]];
+    const it=[[TOTAL,'aprobaciones de pago',C.ink],[cnt.con,'conformes',C.ok],[cnt.rep,'reprocesadas',C.warn],[cnt.exc,'autoridad insuficiente',C.crit],[money(usd),'monto liberado',C.accent]];
     c.innerHTML=it.map(([n,l,col])=>`<div class="au-kpi"><div class="n" style="color:${col}">${typeof n==='number'?n.toLocaleString('es-EC'):n}</div><div class="l">${l}</div></div>`).join('');
   }
   function addRow(o){
@@ -1967,25 +1917,31 @@ window.__fitAll = () => window.P2PRT.fitAll();
     d.className='au-row';if(!clickable)d.style.cursor='default';
     d.innerHTML=`<span class="oc">OC ${o.oc}</span><span class="rz">${o.mot}</span>`;
     if(clickable)d.onclick=()=>window.__drillTo&&window.__drillTo(1,est);
-    el.appendChild(d);
-    document.getElementById('au-n-'+k).textContent=cnt[k];
+    el.insertBefore(d,el.firstChild);
+    while(el.childElementCount>MAXROWS)el.removeChild(el.lastChild);
+    document.getElementById('au-n-'+k).textContent=nfmt(cnt[k]);
   }
 
   function next(){
     idx++;
-    if(idx>=OCS.length){ph='done';step(OCS.length);
-      setAnalisis(`<b>Universo cerrado.</b> ${OCS.length} órdenes clasificadas: ${cnt.con} conformes, ${cnt.rep} reprocesadas y ${cnt.exc} excepciones. La política define cómo deberían ocurrir las cosas; los datos completos cuentan cómo ocurren.`,'ok');
-      return;}
+    if(idx>=TOTAL){ph='done';step();
+      setAnalisis(`<b>Universo cerrado.</b> ${nfmt(TOTAL)} aprobaciones de pago clasificadas: ${nfmt(cnt.con)} conformes, ${nfmt(cnt.rep)} reprocesadas y ${nfmt(cnt.exc)} con autoridad insuficiente. La política define cómo deberían ocurrir las cosas; los datos cuentan cómo ocurren.`,'ok');
+      pause();return;}
     const o=OCS[idx];
     step(idx+1);
     // si fue rechazada, sube hasta el nivel donde la rechazaron; si no, hasta el máximo que liberó
     const top=o.reproc?o.reproc.at:Math.max(...o.got);
     sph={o,x:L.cx,y:L.base,r:rad(o.amt),target:lvY(top),top};
     rings=[];ph='rise';pt=0;
-    setAnalisis(`Orden <b>${o.oc}</b> por <b>${money(o.amt)}</b>. Exige nivel <b>N${req(o.amt)}</b>.`,'');
+    if(narra())setAnalisis(`Orden <b>${o.oc}</b> por <b>${money(o.amt)}</b>. Exige nivel <b>N${req(o.amt)}</b>.`,'');
   }
 
   function update(dt){
+    let simulated=dt*spd,n=0;
+    while(simulated>0&&n<MAXSUB){const d=Math.min(SUB,simulated);sub(d);simulated-=d;n++;}
+    if(!narra())agregado();
+  }
+  function sub(dt){
     if(ph==='idle'||ph==='done')return;
     const o=sph&&sph.o;
     if(ph==='rise'){
@@ -1994,12 +1950,14 @@ window.__fitAll = () => window.P2PRT.fitAll();
       if(sph.y<=sph.target){sph.y=sph.target;
         if(o.reproc){ph='reject';pt=0;flash=1;}
         else {ph='hold';pt=0;
-          if(o.falta){setAnalisis(o.an,'crit');}
-          else setAnalisis(o.an||`Orden <b>${o.oc}</b> · ${money(o.amt)} liberada en <b>N${sph.top}</b>. Coincide con la política.`,o.out==='con'?'ok':'');
+          if(narra()){
+            if(o.falta)setAnalisis(o.an,'crit');
+            else setAnalisis(o.an||`Orden <b>${o.oc}</b> · ${money(o.amt)} liberada en <b>N${sph.top}</b>. Coincide con la política.`,o.out==='con'?'ok':'');
+          }
         }}
     } else if(ph==='reject'){
       pt+=dt;flash=Math.max(0,1-pt/0.9);
-      if(pt===0||pt<0.05)setAnalisis(o.an,o.out==='exc'?'crit':'warn');
+      if(narra()&&pt<0.05)setAnalisis(o.an,o.out==='exc'?'crit':'warn');
       if(pt>0.9){ // desciende al nivel del monto ajustado
         const nl=req(o.reproc.to);
         sph.target=lvY(nl);sph.top=nl;sph.o=Object.assign({},o,{amtShown:o.reproc.to});
@@ -2025,7 +1983,8 @@ window.__fitAll = () => window.P2PRT.fitAll();
       if(u>=1||Math.hypot(c.x-sph.x,c.y-sph.y)<8){
         cnt[o.out]++;usd+=(o.reproc?o.reproc.to:o.amt);
         parked.push({x:c.x+(Math.random()-.5)*40,y:c.y+18+(Math.random()-.5)*10,r:Math.max(3,sph.r*0.5),c:o.out});
-        addRow(o);renderCounters();sph=null;next();}
+        if(parked.length>MAXPARKED)parked.splice(0,parked.length-MAXPARKED);
+        addRow(o);renderCounters();step();sph=null;next();}
     }
   }
 
@@ -2102,6 +2061,7 @@ window.__fitAll = () => window.P2PRT.fitAll();
     ctx.textAlign='left';ctx.fillStyle=C.faint;ctx.font='500 9px monospace';
     ctx.fillText('cada liberación deja su anillo de color en la OC',14,H-12);
   }
+  function safeDraw(){try{if(W&&H)draw(0);}catch(e){console.error('[P2P] draw autorizaciones',e);}}
   function frame(ts){
     if(!run)return false;
     if(!W||!H)return;
@@ -2109,35 +2069,58 @@ window.__fitAll = () => window.P2PRT.fitAll();
     let dt=(ts-last)/1000;last=ts;dt=Math.min(dt,0.05);
     update(dt);draw((ts-t0)/1000);
   }
-  function start(){run=true;t0=0;last=0;P2PRT.start(KEY,frame);}
-  function skipAll(){
-    while(ph!=='done'){
-      if(!sph){next();if(ph==='done')break;}
-      const o=sph.o;
-      o.got.forEach(n=>{if(!rings.includes(n))rings.push(n);});
-      cnt[o.out]++;usd+=(o.reproc?o.reproc.to:o.amt);
-      const c=L.col[o.out];
-      parked.push({x:c.x+(Math.random()-.5)*40,y:c.y+18+(Math.random()-.5)*10,r:5,c:o.out});
-      addRow(o);sph=null;
-    }
-    renderCounters();
+  function play(){
+    if(ph==='done')seekTo(0);
+    paused=false;run=true;t0=0;last=0;icon(false);P2PRT.start(KEY,frame);
+  }
+  function pause(){paused=true;run=false;icon(true);P2PRT.stop(KEY);safeDraw();}
+  function icon(isPaused){
+    const e=document.getElementById('au-ico');if(!e)return;
+    e.innerHTML=isPaused?'<path d="M7 5v14l12-7z"/>':'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+    const b=document.getElementById('auPlay');
+    if(b){b.title=isPaused?'Reproducir':'Pausar';b.setAttribute('aria-label',b.title);}
   }
   function doa(){
     const e=document.getElementById('au-doa');if(!e)return;
     e.innerHTML=LV.map(l=>`<div class="au-lvl"><i style="background:${l.col}"></i><b>${l.nom.split(' · ')[1]}<small>${l.nom.split(' · ')[0]}</small></b><span>${l.lim.replace('USD ','')}</span></div>`).join('')
       +`<div style="font-size:9.5px;color:var(--muted);margin-top:8px;line-height:1.5">Fuente: estrategias de liberación (EKKO) y documentos de cambio (CDHDR / CDPOS).</div>`;
   }
-  window.__auReset=()=>{size();doa();reset();start();};
+  /* ---------- transporte ---------- */
+  const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
+  on('auPlay',()=>{paused?play():pause();});
+  on('auFirst',()=>{pause();seekTo(0);});
+  on('auLast',()=>{pause();seekTo(TOTAL);});
+  on('auBack',()=>{const w2=paused;pause();seekTo(cnt.con+cnt.rep+cnt.exc-stepJump());if(!w2)play();});
+  on('auFwd',()=>{const w2=paused;pause();seekTo(cnt.con+cnt.rep+cnt.exc+stepJump());if(!w2)play();});
+  on('auDrill',()=>window.__drillTo&&window.__drillTo(1,'exc'));
+  const sp=document.getElementById('auSpeed');
+  if(sp)sp.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    spd=Number(b.dataset.s)||1;lastAn='';
+    sp.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  });
+
+  window.__auEnsure=()=>{size();safeDraw();};          // no reinicia el recorrido
+  window.__auReset=()=>{size();pause();seekTo(0);};
   window.__auResize=()=>{size();};
-  const rb=document.getElementById('auReplay');if(rb)rb.onclick=()=>window.__auReset();
-  const sk=document.getElementById('auSkip');if(sk)sk.onclick=()=>{skipAll();};
-  const dr=document.getElementById('auDrill');if(dr)dr.onclick=()=>window.__drillTo&&window.__drillTo(1,'exc');
-  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
-  doa();size();renderCounters();
+  P2PRT.registerCanvas(KEY,cvs,size,()=>{if(paused)safeDraw();else play();});
+  doa();size();icon(true);renderCounters();seekTo(0);
 })();
 </script>
 <script>
-/* ===== Recorrido paso a paso · documento a documento ===== */
+/* =========================================================================
+   ARCHIVO: index.html · BLOQUE: motor del Ciclo
+   Recorrido documento a documento sobre la POBLACIÓN COMPLETA (2.600).
+   Sustituye a los dos modos anteriores (paso a paso + población completa).
+
+   Modelo: emisión continua con varios documentos en vuelo. El intervalo de
+   emisión y la velocidad de traslación escalan con el multiplicador elegido.
+   A 1x y 4x el panel lateral narra el documento en foco; por encima pasa a
+   lectura agregada, porque el relato individual deja de ser legible.
+
+   Transporte: inicio · retroceder · reproducir/pausar · avanzar · final.
+   Pausar congela el estado. Retroceder y avanzar reconstruyen el estado de
+   forma determinista (seekTo), sin animar el tramo saltado.
+   ========================================================================= */
 (() => {
   "use strict";
   const cvs=document.getElementById('rpCanvas'); if(!cvs) return;
@@ -2158,33 +2141,23 @@ window.__fitAll = () => window.P2PRT.fitAll();
     C5:['Facturas duplicadas','Pago'],C6:['Anticipos sin respaldo','Pago'],C7:['CAPEX / Órdenes inversión','Orden']};
   const CIDX={C1:0,C2:1,C3:2,C4:3,C5:4,C6:5,C7:6};
   const money=n=>'USD '+Math.round(n).toLocaleString('es-EC');
+  const nfmt=n=>n.toLocaleString('es-EC');
 
-  const DOCS=[
-    {d:'4500011794',m:4200 ,out:'con'},
-    {d:'4500011591',m:9500 ,out:'con'},
-    {d:'4500012030',m:7400 ,out:'desv',c:'C2',mot:'Aprobada con un nivel de dos',
-      an:'<b>Desviación gestionada.</b> La orden se liberó con un solo nivel de aprobación de los dos que exige el monto. Existe rastro de la aprobación, pero incompleto.'},
-    {d:'4500011375',m:2100 ,out:'con'},
-    {d:'RE 5000034558',m:38900,out:'exc',c:'C4',mot:'Factura sin recepción en MSEG',
-      an:'<b>Excepción.</b> Se registró la factura sin que exista entrada de mercadería. El 3-Way Match no puede completarse: se paga algo que nadie confirmó haber recibido.'},
-    {d:'4500011231',m:52000,out:'con'},
-    {d:'4500011477',m:1800 ,out:'desv',c:'C4',mot:'Diferencia dentro de tolerancia',
-      an:'<b>Desviación gestionada.</b> Hay diferencia entre factura y recepción, pero cae dentro de la tolerancia acordada con el proveedor. Se documenta y no escala.'},
-    {d:'RE 5000034498',m:44300,out:'exc',c:'C5',mot:'Duplicado: mismo XBLNR y WRBTR',
-      an:'<b>Excepción.</b> Misma referencia y mismo importe que una factura ya contabilizada. Riesgo directo de doble pago de la misma obligación.'},
-    {d:'4500011820',m:18400,out:'con'},
-    {d:'ZP 2000001234',m:31500,out:'exc',c:'C6',mot:'Anticipo sin OC ni recepción',
-      an:'<b>Excepción.</b> Se ejecutó un anticipo sin orden de compra ni recepción asociada. No hay obligación que respalde la salida de efectivo.'},
-    {d:'A-100-2025-006',m:2400,out:'desv',c:'C7',mot:'Orden de inversión sin activo ANLA',
-      an:'<b>Desviación gestionada.</b> La orden de inversión no tiene activo fijo asociado en ANLA. El gasto está presupuestado, pero la trazabilidad contable queda incompleta.'},
-    {d:'4500011655',m:6700 ,out:'con'}
-  ];
+  const POB=window.buildPobAnim();        // fuente única, 2.600 documentos
+  const TOTAL=POB.length;
 
-  let W,H,DPR,L={},run=false,t0=0,last=0;
-  let idx=-1,ph='idle',pt=0,sph=null,si=0,flash=0,chips=[],parked=[];
-  let cnt={con:0,desv:0,exc:0},usd=0;
   const SPEED=520, EVAL=0.16, FAILT=0.55, FLY=0.35;
+  const EMIT_BASE=1.15;                   // segundos entre documentos a 1x
+  const MAXFLIGHT=60;                     // techo de esferas simultáneas
+  const MAXPARKED=460;                    // techo de esferas estacionadas
+  const MAXROWS=30;                       // filas visibles por lista lateral
+  const SUB=1/120, MAXSUB=48;             // integración a paso fijo
 
+  let W,H,DPR,L={};
+  let run=false, paused=true, t0=0, last=0, spd=1;
+  let idx=0, flight=[], parked=[], cnt={con:0,desv:0,exc:0}, usd=0, emitAcc=0, focus=null, lastAn='';
+
+  /* ---------- geometría ---------- */
   function size(){
     const host=cvs.parentElement;
     const cw=Math.max(320,P2PRT.hostWidth(host,620));
@@ -2201,8 +2174,9 @@ window.__fitAll = () => window.P2PRT.fitAll();
     L.col={desv:{x:W*0.87,y:H*0.15},con:{x:W*0.87,y:H*0.50},exc:{x:W*0.87,y:H*0.85}};
     L.chipY=L.y+40;
   }
-  const rad=m=>6+13*Math.sqrt(m/52000);
+  const rad=m=>4+11*Math.sqrt(m/52000);
 
+  /* ---------- panel lateral ---------- */
   function ctrlList(){
     const e=document.getElementById('rp-ctrls');if(!e)return;
     e.innerHTML=Object.keys(CMETA).map(c=>`<div class="rp-c" data-c="${c}"><span class="cid">${c}</span><span class="cn">${CMETA[c][0]}<small>${CMETA[c][1]}</small></span><span class="cs" id="rp-cs-${c}">·</span></div>`).join('');
@@ -2215,81 +2189,173 @@ window.__fitAll = () => window.P2PRT.fitAll();
   function clearCtrls(){Object.keys(CMETA).forEach(c=>{markCtrl(c,'');
     const r=document.querySelector(`.rp-c[data-c="${c}"]`);if(r)r.classList.remove('on');});}
   function hi(c,on){const r=document.querySelector(`.rp-c[data-c="${c}"]`);if(r)r.classList.toggle('on',!!on);}
+  function setAn(html,cls){
+    if(html===lastAn)return; lastAn=html;
+    const e=document.getElementById('rp-analisis');if(!e)return;
+    e.className='au-analisis '+(cls||'');e.innerHTML=html;
+  }
+  const narra=()=>spd<=4;   // por encima de 4x el relato individual no es legible
 
-  function setAn(html,cls){const e=document.getElementById('rp-analisis');e.className='au-analisis '+(cls||'');e.innerHTML=html;}
-  function step(k){document.getElementById('rp-step').textContent=`PASO ${k} DE ${DOCS.length}`;}
+  function progress(){
+    const done=cnt.con+cnt.desv+cnt.exc;
+    const st=document.getElementById('rp-step');
+    if(st)st.textContent=`DOCUMENTO ${nfmt(done)} DE ${nfmt(TOTAL)}`;
+    const c=document.getElementById('rp-count');
+    if(c)c.textContent=`${nfmt(done)} de ${nfmt(TOTAL)}`;
+    const b=document.getElementById('rp-prog');
+    if(b)b.style.width=(done/TOTAL*100).toFixed(2)+'%';
+  }
   function counters(){
     const c=document.getElementById('rp-counters');if(!c)return;
-    const it=[[DOCS.length,'documentos',C.ink],[cnt.con,'conformes',C.ok],[cnt.desv,'desviaciones',C.warn],[cnt.exc,'excepciones',C.crit],[money(usd),'monto revisado',C.accent]];
-    c.innerHTML=it.map(([n,l,col])=>`<div class="au-kpi"><div class="n" style="color:${col}">${typeof n==='number'?n.toLocaleString('es-EC'):n}</div><div class="l">${l}</div></div>`).join('');
+    const it=[[TOTAL,'población',C.ink],[cnt.con,'conformes',C.ok],[cnt.desv,'desviaciones',C.warn],[cnt.exc,'excepciones',C.crit],[money(usd),'monto recorrido',C.accent]];
+    c.innerHTML=it.map(([n,l,col])=>`<div class="au-kpi"><div class="n" style="color:${col}">${typeof n==='number'?nfmt(n):n}</div><div class="l">${l}</div></div>`).join('');
   }
   function addRow(o){
-    const el=document.getElementById('rp-list-'+o.out);
+    const el=document.getElementById('rp-list-'+o.out);if(!el)return;
     const d=document.createElement('div');d.className='au-row';
     const rz=o.out==='con'?'7 controles superados':`${o.c} · ${o.mot}`;
     d.innerHTML=`<span class="oc">${o.d}</span><span class="rz">${rz}</span>`;
-    if(o.out!=='con')d.onclick=()=>window.__drillTo&&window.__drillTo(CIDX[o.c],o.out==='exc'?'exc':'desv');
+    if(o.out!=='con')d.onclick=()=>window.__drillTo&&window.__drillTo(CIDX[o.c],o.out);
     else d.style.cursor='default';
-    el.appendChild(d);
-    document.getElementById('rp-n-'+o.out).textContent=cnt[o.out];
+    el.insertBefore(d,el.firstChild);
+    while(el.childElementCount>MAXROWS)el.removeChild(el.lastChild);
+    const n=document.getElementById('rp-n-'+o.out);if(n)n.textContent=nfmt(cnt[o.out]);
   }
-  function reset(){
-    idx=-1;ph='idle';pt=0;sph=null;si=0;flash=0;chips=[];parked=[];
-    cnt={con:0,desv:0,exc:0};usd=0;
-    ['exc','desv','con'].forEach(k=>{document.getElementById('rp-list-'+k).innerHTML='';document.getElementById('rp-n-'+k).textContent='0';});
-    clearCtrls();counters();step(0);
-    next();
-  }
-  function next(){
-    idx++;clearCtrls();chips=[];
-    if(idx>=DOCS.length){ph='done';step(DOCS.length);sph=null;
-      setAn(`<b>Recorrido cerrado.</b> ${DOCS.length} documentos clasificados: ${cnt.con} conformes, ${cnt.desv} desviaciones y ${cnt.exc} excepciones. Cada uno con su control incumplido y su motivo, listo para documentar.`,'ok');
-      return;}
-    const o=DOCS[idx];step(idx+1);
-    sph={o,x:L.x0-30,y:L.y,r:rad(o.m)};
-    si=0;ph='move';pt=0;
-    setAn(`Documento <b>${o.d}</b> por <b>${money(o.m)}</b> inicia el ciclo.`,'');
+  function clearLists(){
+    ['exc','desv','con'].forEach(k=>{
+      const l=document.getElementById('rp-list-'+k);if(l)l.innerHTML='';
+      const n=document.getElementById('rp-n-'+k);if(n)n.textContent='0';
+    });
   }
 
-  function update(dt){
-    if(ph==='idle'||ph==='done'||!sph)return;
-    const o=sph.o;
-    if(ph==='move'){
-      const tx=L.sx[si];
-      sph.x+=SPEED*dt;
-      if(sph.x>=tx){sph.x=tx;
-        if(ST[si].c.length){ph='eval';pt=0;ST[si].c.forEach(c=>hi(c,true));}
-        else if(si<ST.length-1){si++;}
-        else {ph='fly';pt=0;}
+  /* ---------- clasificación ---------- */
+  function land(o){
+    cnt[o.out]++; usd+=o.m;
+    const c=L.col[o.out];
+    parked.push({x:c.x+(Math.random()-.5)*46,y:c.y+22+(Math.random()-.5)*12,r:Math.max(2.5,rad(o.m)*0.5),c:o.out});
+    if(parked.length>MAXPARKED)parked.splice(0,parked.length-MAXPARKED);
+    addRow(o);
+  }
+  function emit(){
+    const o=POB[idx++];
+    flight.push({o,x:L.x0-30,y:L.y,r:rad(o.m),si:0,ph:'move',pt:0,chips:[],flash:0});
+  }
+
+  /* ---------- salto determinista ---------- */
+  function seekTo(n){
+    n=Math.max(0,Math.min(TOTAL,n));
+    idx=0;flight=[];parked=[];cnt={con:0,desv:0,exc:0};usd=0;emitAcc=EMIT_BASE;focus=null;lastAn='';   // emite de inmediato
+    clearCtrls();clearLists();
+    const tail=[];
+    for(let i=0;i<n;i++){
+      const o=POB[i];cnt[o.out]++;usd+=o.m;
+      if(i>=n-MAXROWS*3)tail.push(o);
+    }
+    idx=n;
+    // repoblar el lienzo con una muestra de estacionados y las últimas filas
+    const cap=Math.min(MAXPARKED,n);
+    for(let i=0;i<cap;i++){
+      const o=POB[Math.floor(i*n/cap)];const c=L.col[o.out];
+      parked.push({x:c.x+(Math.random()-.5)*46,y:c.y+22+(Math.random()-.5)*12,r:Math.max(2.5,rad(o.m)*0.5),c:o.out});
+    }
+    ['con','desv','exc'].forEach(k=>{
+      const el=document.getElementById('rp-list-'+k);if(!el)return;
+      tail.filter(o=>o.out===k).slice(-MAXROWS).forEach(o=>{
+        const d=document.createElement('div');d.className='au-row';
+        const rz=o.out==='con'?'7 controles superados':`${o.c} · ${o.mot}`;
+        d.innerHTML=`<span class="oc">${o.d}</span><span class="rz">${rz}</span>`;
+        if(o.out!=='con')d.onclick=()=>window.__drillTo&&window.__drillTo(CIDX[o.c],o.out);
+        else d.style.cursor='default';
+        el.insertBefore(d,el.firstChild);
+      });
+      const nn=document.getElementById('rp-n-'+k);if(nn)nn.textContent=nfmt(cnt[k]);
+    });
+    counters();progress();
+    if(n>=TOTAL){
+      setAn(`<b>Recorrido cerrado.</b> ${nfmt(TOTAL)} documentos clasificados: ${nfmt(cnt.con)} conformes, ${nfmt(cnt.desv)} desviaciones y ${nfmt(cnt.exc)} excepciones. Cada hallazgo con su control incumplido y su motivo, listo para documentar.`,'ok');
+      pause();
+    } else if(n===0){
+      setAn('Pulsa reproducir para recorrer la población documento a documento.','');
+    } else {
+      setAn(`Recorrido posicionado en el documento <b>${nfmt(n)}</b> de ${nfmt(TOTAL)}.`,'');
+    }
+    safeDraw();
+  }
+  const stepJump=()=>Math.max(1,Math.round(TOTAL*0.05));
+
+  function reset(){seekTo(0);}
+
+  /* ---------- simulación ---------- */
+  function advance(f,dt){
+    const o=f.o;
+    if(f.ph==='move'){
+      const tx=L.sx[f.si];
+      f.x+=SPEED*dt;
+      if(f.x>=tx){f.x=tx;
+        if(ST[f.si].c.length){f.ph='eval';f.pt=0;if(f===focus)ST[f.si].c.forEach(c=>hi(c,true));}
+        else if(f.si<ST.length-1)f.si++;
+        else {f.ph='fly';f.pt=0;}
       }
-    } else if(ph==='eval'){
-      pt+=dt;
-      if(pt>=EVAL){
-        const cs=ST[si].c;
+    } else if(f.ph==='eval'){
+      f.pt+=dt;
+      if(f.pt>=EVAL){
+        const cs=ST[f.si].c;
         const fail=o.out!=='con'&&cs.includes(o.c);
         cs.forEach(c=>{const bad=(fail&&c===o.c);
-          chips.push({c,x:L.sx[si],i:cs.indexOf(c),bad});markCtrl(c,bad?'bad':'ok');hi(c,false);});
-        if(fail){ph='fail';pt=0;flash=1;setAn(o.an,o.out==='exc'?'crit':'warn');}
-        else if(si<ST.length-1){si++;ph='move';}
-        else {ph='fly';pt=0;setAn(`Documento <b>${o.d}</b> supera los <b>7 controles</b>. Conforme.`,'ok');}
+          f.chips.push({c,x:L.sx[f.si],i:cs.indexOf(c),bad});
+          if(f===focus){markCtrl(c,bad?'bad':'ok');hi(c,false);}});
+        if(fail){
+          f.ph='fail';f.pt=0;f.flash=1;
+          setFocus(f);                                   // el hallazgo se lleva el relato
+          if(narra())setAn(o.an,o.out==='exc'?'crit':'warn');
+        }
+        else if(f.si<ST.length-1){f.si++;f.ph='move';}
+        else {f.ph='fly';f.pt=0;if(f===focus&&narra())setAn(`Documento <b>${o.d}</b> supera los <b>7 controles</b>. Conforme.`,'ok');}
       }
-    } else if(ph==='fail'){
-      pt+=dt;flash=Math.max(0,1-pt/0.7);
-      if(pt>=FAILT){ph='fly';pt=0;}
-    } else if(ph==='fly'){
-      pt+=dt;
-      const c=L.col[o.out],u=Math.min(1,pt/FLY);
-      sph.x+=(c.x-sph.x)*Math.min(1,dt*7);
-      sph.y+=(c.y-sph.y)*Math.min(1,dt*7);
-      sph.r*=0.99;
-      if(u>=1||Math.hypot(c.x-sph.x,c.y-sph.y)<7){
-        cnt[o.out]++;usd+=o.m;
-        parked.push({x:c.x+(Math.random()-.5)*46,y:c.y+22+(Math.random()-.5)*12,r:Math.max(3,sph.r*0.55),c:o.out});
-        addRow(o);counters();sph=null;next();
-      }
+    } else if(f.ph==='fail'){
+      f.pt+=dt;f.flash=Math.max(0,1-f.pt/0.7);
+      if(f.pt>=FAILT){f.ph='fly';f.pt=0;}
+    } else if(f.ph==='fly'){
+      f.pt+=dt;
+      const c=L.col[o.out],u=Math.min(1,f.pt/FLY);
+      f.x+=(c.x-f.x)*Math.min(1,dt*7);
+      f.y+=(c.y-f.y)*Math.min(1,dt*7);
+      f.r*=0.99;
+      if(u>=1||Math.hypot(c.x-f.x,c.y-f.y)<7){land(o);return true;}
     }
+    return false;
+  }
+  function setFocus(f){
+    if(focus===f)return;
+    focus=f;clearCtrls();
+    if(f)f.chips.forEach(z=>markCtrl(z.c,z.bad?'bad':'ok'));
+  }
+  function sub(dt){
+    // emisión
+    emitAcc+=dt;
+    const every=EMIT_BASE;
+    while(emitAcc>=every && idx<TOTAL && flight.length<MAXFLIGHT){emitAcc-=every;emit();}
+    if(idx>=TOTAL&&!flight.length){
+      if(!paused)seekTo(TOTAL);   // cierre una sola vez
+      return;
+    }
+    // avance
+    for(let i=flight.length-1;i>=0;i--){
+      if(advance(flight[i],dt)){if(flight[i]===focus)focus=null;flight.splice(i,1);}
+    }
+    if(!focus&&flight.length)setFocus(flight[0]);
+    if(focus&&narra()&&focus.ph==='move'&&focus.si===0)
+      setAn(`Documento <b>${focus.o.d}</b> por <b>${money(focus.o.m)}</b> inicia el ciclo.`,'');
+    if(!narra())
+      setAn(`Lectura agregada a ${spd}×. <b>${nfmt(cnt.con+cnt.desv+cnt.exc)}</b> de ${nfmt(TOTAL)} documentos clasificados · <b style="color:var(--crit)">${nfmt(cnt.exc)}</b> excepciones y <b style="color:var(--warn)">${nfmt(cnt.desv)}</b> desviaciones. Baja a 1× para ver el detalle de cada documento.`,'');
+  }
+  function update(dt){
+    let simulated=dt*spd, n=0;
+    while(simulated>0 && n<MAXSUB){const d=Math.min(SUB,simulated);sub(d);simulated-=d;n++;}
+    counters();progress();
   }
 
+  /* ---------- dibujo ---------- */
   function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
   function sphere(x,y,r,col){
     const g=ctx.createRadialGradient(x-r*0.35,y-r*0.4,r*0.1,x,y,r);
@@ -2297,34 +2363,31 @@ window.__fitAll = () => window.P2PRT.fitAll();
     ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
   }
   function collector(c,lab,n,col){
-    const w=118,h=44,x=c.x-w/2,y=c.y-h/2;
+    const w=126,h=44,x=c.x-w/2,y=c.y-h/2;
     ctx.fillStyle='rgba(15,32,56,0.85)';ctx.strokeStyle=col;ctx.lineWidth=1.4;
     rr(x,y,w,h,8);ctx.fill();ctx.stroke();
     ctx.fillStyle=col;ctx.font='700 9px system-ui';ctx.textAlign='left';ctx.fillText(lab,x+10,y+16);
-    ctx.fillStyle=C.ink;ctx.font='700 18px system-ui';ctx.fillText(String(n),x+10,y+35);
+    ctx.fillStyle=C.ink;ctx.font='700 17px system-ui';ctx.fillText(nfmt(n),x+10,y+35);
   }
   function draw(){
     const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,C.bg1);g.addColorStop(1,C.bg0);
     ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    // rail
     ctx.strokeStyle=C.rail;ctx.lineWidth=4;ctx.lineCap='round';
-    ctx.beginPath();ctx.moveTo(L.x0-30,L.y);ctx.lineTo(L.col.con.x-60,L.y);ctx.stroke();
-    // ramas guía
+    ctx.beginPath();ctx.moveTo(L.x0-30,L.y);ctx.lineTo(L.col.con.x-66,L.y);ctx.stroke();
     ctx.lineWidth=1.5;ctx.setLineDash([3,6]);
-    ctx.strokeStyle='rgba(245,158,11,0.28)';ctx.beginPath();ctx.moveTo(L.sx[1],L.y);ctx.lineTo(L.col.desv.x-62,L.col.desv.y);ctx.stroke();
-    ctx.strokeStyle='rgba(239,68,68,0.28)';ctx.beginPath();ctx.moveTo(L.sx[4],L.y);ctx.lineTo(L.col.exc.x-62,L.col.exc.y);ctx.stroke();
+    ctx.strokeStyle='rgba(245,158,11,0.28)';ctx.beginPath();ctx.moveTo(L.sx[1],L.y);ctx.lineTo(L.col.desv.x-66,L.col.desv.y);ctx.stroke();
+    ctx.strokeStyle='rgba(239,68,68,0.28)';ctx.beginPath();ctx.moveTo(L.sx[4],L.y);ctx.lineTo(L.col.exc.x-66,L.col.exc.y);ctx.stroke();
     ctx.setLineDash([]);
-    // estaciones
-    ST.forEach((s,i)=>{const x=L.sx[i],act=sph&&si===i&&(ph==='eval');
+    const fchips=focus?focus.chips:[];
+    ST.forEach((s,i)=>{const x=L.sx[i],act=focus&&focus.si===i&&focus.ph==='eval';
       ctx.fillStyle='#0c1a30';ctx.strokeStyle=s.c.length?(act?C.accent:'rgba(42,143,255,.5)'):C.rail;
       ctx.lineWidth=act?2.5:1.6;
       ctx.beginPath();ctx.arc(x,L.y,s.c.length?9:7,0,7);ctx.fill();ctx.stroke();
       ctx.textAlign='center';
       ctx.fillStyle=C.ink;ctx.font='600 10.5px system-ui';ctx.fillText(s.n,x,L.y-24);
       ctx.fillStyle=C.dim;ctx.font='600 8.5px monospace';ctx.fillText(s.t,x,L.y-12);
-      // chips de control bajo la estación
       s.c.forEach((c,k)=>{
-        const done=chips.find(z=>z.c===c);
+        const done=fchips.find(z=>z.c===c);
         const cy=L.chipY+k*17,cw=30,cx=x-cw/2;
         ctx.fillStyle=done?(done.bad?'rgba(239,68,68,.18)':'rgba(34,197,94,.15)'):'rgba(255,255,255,.04)';
         ctx.strokeStyle=done?(done.bad?C.crit:C.ok):'rgba(255,255,255,.10)';ctx.lineWidth=1;
@@ -2335,70 +2398,96 @@ window.__fitAll = () => window.P2PRT.fitAll();
     });
     ctx.textAlign='center';ctx.fillStyle=C.faint;ctx.font='600 8.5px monospace';
     ctx.fillText('ENTRADA',L.x0-30,L.y-16);
-    // estacionados
     parked.forEach(p=>{const col=p.c==='con'?C.ok:p.c==='desv'?C.warn:C.crit;
       ctx.fillStyle=col+'99';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();});
-    // colectores
     collector(L.col.desv,'DESVIACIONES',cnt.desv,C.warn);
     collector(L.col.con,'CONFORMES',cnt.con,C.ok);
     collector(L.col.exc,'EXCEPCIONES',cnt.exc,C.crit);
-    // esfera activa
-    if(sph){
-      const o=sph.o;
-      const col=(ph==='fail'||ph==='fly')&&o.out!=='con'?(o.out==='exc'?C.crit:C.warn):(ph==='fly'?C.ok:C.neutral);
-      if(flash>0){ctx.save();ctx.globalAlpha=flash;ctx.strokeStyle=o.out==='exc'?C.crit:C.warn;ctx.lineWidth=3;
-        ctx.beginPath();ctx.arc(sph.x,sph.y,sph.r+12+(1-flash)*20,0,7);ctx.stroke();ctx.restore();}
-      if(ph==='eval'){ctx.save();ctx.globalAlpha=.5+.5*Math.sin(pt*18);ctx.strokeStyle=C.accent;ctx.lineWidth=1.6;
-        ctx.beginPath();ctx.arc(sph.x,sph.y,sph.r+8,0,7);ctx.stroke();ctx.restore();}
-      sphere(sph.x,sph.y,sph.r,col);
-      ctx.textAlign='center';ctx.fillStyle=C.ink;ctx.font='700 10px monospace';
-      ctx.fillText(o.d,sph.x,sph.y-sph.r-17);
-      ctx.fillStyle=C.dim;ctx.font='600 9.5px monospace';
-      ctx.fillText(money(o.m),sph.x,sph.y-sph.r-6);
-      if(ph==='fail'){ctx.fillStyle=o.out==='exc'?C.crit:C.warn;ctx.font='700 9px monospace';
-        ctx.fillText((o.out==='exc'?'EXCEPCIÓN · ':'DESVIACIÓN · ')+o.c,sph.x,sph.y+sph.r+16);}
-    }
+    // esferas en vuelo: el foco se dibuja al final y con rótulo
+    flight.forEach(f=>{if(f!==focus)drawSphere(f,false);});
+    if(focus)drawSphere(focus,true);
     ctx.textAlign='left';ctx.fillStyle=C.faint;ctx.font='500 9px monospace';
     ctx.fillText('cada etapa evalúa sus controles: ✓ supera · ✗ incumple',14,H-12);
+    if(paused){
+      ctx.fillStyle='rgba(226,232,240,.55)';ctx.font='700 9px monospace';ctx.textAlign='right';
+      ctx.fillText('EN PAUSA',W-14,H-12);
+    }
   }
-  function frame(ts){if(!run)return false;if(!W||!H)return;
+  function drawSphere(f,isFocus){
+    const o=f.o;
+    const col=(f.ph==='fail'||f.ph==='fly')&&o.out!=='con'?(o.out==='exc'?C.crit:C.warn):(f.ph==='fly'?C.ok:C.neutral);
+    if(f.flash>0){ctx.save();ctx.globalAlpha=f.flash;ctx.strokeStyle=o.out==='exc'?C.crit:C.warn;ctx.lineWidth=3;
+      ctx.beginPath();ctx.arc(f.x,f.y,f.r+12+(1-f.flash)*20,0,7);ctx.stroke();ctx.restore();}
+    if(isFocus&&f.ph==='eval'){ctx.save();ctx.globalAlpha=.5+.5*Math.sin(f.pt*18);ctx.strokeStyle=C.accent;ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.arc(f.x,f.y,f.r+8,0,7);ctx.stroke();ctx.restore();}
+    ctx.save(); if(!isFocus)ctx.globalAlpha=.72;
+    sphere(f.x,f.y,f.r,col); ctx.restore();
+    if(!isFocus||!narra())return;
+    ctx.textAlign='center';ctx.fillStyle=C.ink;ctx.font='700 10px monospace';
+    ctx.fillText(o.d,f.x,f.y-f.r-17);
+    ctx.fillStyle=C.dim;ctx.font='600 9.5px monospace';
+    ctx.fillText(money(o.m),f.x,f.y-f.r-6);
+    if(f.ph==='fail'){ctx.fillStyle=o.out==='exc'?C.crit:C.warn;ctx.font='700 9px monospace';
+      ctx.fillText((o.out==='exc'?'EXCEPCIÓN · ':'DESVIACIÓN · ')+o.c,f.x,f.y+f.r+16);}
+  }
+  function safeDraw(){try{if(W&&H)draw();}catch(e){console.error('[P2P] draw ciclo',e);}}
+
+  /* ---------- bucle ---------- */
+  function frame(ts){
+    if(!run)return false;
+    if(!W||!H)return;
     if(!t0){t0=ts;last=ts;}
     let dt=(ts-last)/1000;last=ts;dt=Math.min(dt,0.05);
-    update(dt);draw();}
-  function start(){run=true;t0=0;last=0;P2PRT.start(KEY,frame);}
-  function skipAll(){
-    while(ph!=='done'){
-      if(!sph){next();if(ph==='done')break;}
-      const o=sph.o;cnt[o.out]++;usd+=o.m;
-      const c=L.col[o.out];
-      parked.push({x:c.x+(Math.random()-.5)*46,y:c.y+22+(Math.random()-.5)*12,r:5,c:o.out});
-      addRow(o);sph=null;
-    }
-    counters();
+    update(dt);draw();
   }
-  window.__rpReset=()=>{size();ctrlList();reset();start();};
+  function play(){
+    if(idx>=TOTAL&&!flight.length)seekTo(0);
+    paused=false;run=true;t0=0;last=0;icon(false);P2PRT.start(KEY,frame);
+  }
+  function pause(){paused=true;run=false;icon(true);P2PRT.stop(KEY);safeDraw();}
+  function icon(isPaused){
+    const e=document.getElementById('rp-ico');if(!e)return;
+    e.innerHTML=isPaused?'<path d="M7 5v14l12-7z"/>':'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+    const b=document.getElementById('rpPlay');
+    if(b){b.title=isPaused?'Reproducir':'Pausar';b.setAttribute('aria-label',b.title);}
+  }
+
+  /* ---------- transporte ---------- */
+  const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
+  on('rpPlay',()=>{paused?play():pause();});
+  on('rpFirst',()=>{pause();seekTo(0);});
+  on('rpLast',()=>{pause();seekTo(TOTAL);});
+  on('rpBack',()=>{const wasPaused=paused;pause();seekTo(cnt.con+cnt.desv+cnt.exc-stepJump());if(!wasPaused)play();});
+  on('rpFwd',()=>{const wasPaused=paused;pause();seekTo(cnt.con+cnt.desv+cnt.exc+stepJump());if(!wasPaused)play();});
+  on('rpExplore',()=>window.__goExplore&&window.__goExplore());
+  const sp=document.getElementById('rpSpeed');
+  if(sp)sp.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    spd=Number(b.dataset.s)||1;lastAn='';
+    sp.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    if(!narra())clearCtrls();
+  });
+
+  /* ---------- clic en los colectores ---------- */
+  function hitAt(x,y){
+    const test=c=>{const w=126,h=44;return x>=c.x-w/2&&x<=c.x+w/2&&y>=c.y-h/2&&y<=c.y+h/2;};
+    if(test(L.col.desv))return 'desv';
+    if(test(L.col.exc))return 'exc';
+    if(test(L.col.con))return 'conf';
+    return null;
+  }
+  function canvasXY(e){const r=cvs.getBoundingClientRect();return {x:(e.clientX-r.left)*(W/r.width),y:(e.clientY-r.top)*(H/r.height)};}
+  cvs.addEventListener('click',e=>{const {x,y}=canvasXY(e);const s2=hitAt(x,y);if(s2&&window.__goExploreState)window.__goExploreState(s2);});
+  cvs.addEventListener('mousemove',e=>{const {x,y}=canvasXY(e);cvs.style.cursor=hitAt(x,y)?'pointer':'default';});
+
+  /* ---------- integración con showView y P2PRT ---------- */
+  window.__rpEnsure=()=>{size();safeDraw();};          // no reinicia el recorrido
+  window.__rpReset=()=>{size();pause();seekTo(0);};
   window.__rpResize=()=>{size();};
-  const a=document.getElementById('rpReplay');if(a)a.onclick=()=>window.__rpReset();
-  const b=document.getElementById('rpSkip');if(b)b.onclick=()=>skipAll();
-  const c2=document.getElementById('rpExplore');if(c2)c2.onclick=()=>window.__goExplore&&window.__goExplore();
-  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
-  ctrlList();size();counters();reset();start();
+  P2PRT.registerCanvas(KEY,cvs,size,()=>{if(paused)safeDraw();else play();});
+
+  ctrlList();size();icon(true);seekTo(0);
 })();
 
-/* ===== Conmutador de modo de la vista Reproducción ===== */
-(() => {
-  const bs=document.getElementById('rpModeStep'),bp=document.getElementById('rpModePop');
-  const vs=document.getElementById('rp-stepmode'),vp=document.getElementById('rp-popmode');
-  if(!bs||!bp)return;
-  function mode(step){
-    bs.classList.toggle('on',step);bp.classList.toggle('on',!step);
-    vs.style.display=step?'':'none';vp.style.display=step?'none':'';
-    if(step){if(window.__rpReset)window.__rpReset();}
-    else{if(window.__reproResize)window.__reproResize();if(window.__reproReset)window.__reproReset();if(window.__renderBreakdown)window.__renderBreakdown();}
-  }
-  bs.onclick=()=>mode(true);bp.onclick=()=>mode(false);
-  window.__rpMode=mode;
-})();
 </script>
 </body>
 </html>
