@@ -20,7 +20,20 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .topbar-right{display:flex;align-items:center;gap:12px}
 .badge-live{background:#0f3d24;color:#22c55e;border:1px solid #166534;font-size:9px;padding:3px 9px;border-radius:20px;font-weight:700;letter-spacing:.6px}
 .period{font-size:11px;color:var(--muted)}
-.nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:2px;padding:0 20px}
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:0 20px}
+.nav-group{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:0 10px 0 2px;user-select:none;align-self:center}
+.nav-sep{width:1px;height:16px;background:var(--border);margin:0 14px;align-self:center}
+.cv-host-err{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(8,18,33,.94);color:var(--text);font-size:12px;text-align:center;padding:18px;z-index:5}
+.cv-host-err b{color:var(--warn);font-size:12px;font-weight:700}
+.cv-host-err small{color:var(--muted);font-size:10.5px;max-width:420px;line-height:1.5}
+.cv-host-err button{margin-top:6px;background:var(--accent);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer}
+.rt-banner{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:200;background:var(--bg3);border:1px solid var(--warn);border-radius:8px;padding:9px 14px;font-size:11px;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px}
+.rt-banner button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1}
+.fit-btn{background:var(--bg4);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:10.5px;font-weight:600;cursor:pointer}
+.fit-btn:hover{border-color:var(--accent2);color:#fff}
+.pat-host{margin-top:12px}
+.pat-host .panel-hdr select{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:11px}
+.pat-ctx{font-size:10.5px;color:var(--muted);line-height:1.55;margin:0 0 10px}
 .nav-btn{padding:10px 14px;font-size:11px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-weight:600;letter-spacing:.3px;text-transform:uppercase;background:none;border-top:none;border-left:none;border-right:none}
 .nav-btn.active{color:#fff;border-bottom-color:var(--accent2)}
 .nav-btn:hover:not(.active){color:var(--text)}
@@ -117,7 +130,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .watermark{text-align:right;font-size:9px;color:rgba(255,255,255,.1);padding:8px 20px;border-top:1px solid var(--border);margin-top:8px;letter-spacing:.3px}
 @media print{
   body{background:#fff;color:#000}
-  .nav,.topbar-right .badge-live,.upload-zone,.parse-btn,.print-btn,.close-btn,.save-row-btn,.nav-btn{display:none!important}
+  .nav,.nav-group,.nav-sep,.topbar-right .badge-live,.upload-zone,.parse-btn,.print-btn,.close-btn,.save-row-btn,.nav-btn,.fit-btn,.rt-banner{display:none!important}
   .view{display:block!important;padding:10px}
   .panel,.kpi,.ctrl-row,.drilldown{background:#fff!important;border:1px solid #ccc!important;color:#000!important}
   .kpi-label,.muted,.panel-title,.ctrl-name,.period{color:#555!important}
@@ -269,7 +282,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .au-grid{display:grid;grid-template-columns:236px 1fr 250px;gap:10px;align-items:stretch}
 @media(max-width:1100px){.au-grid{grid-template-columns:1fr}}
 .au-side{font-size:11px}
-.au-stage{padding:0;overflow:hidden;background:#081221;display:flex}
+.au-stage{padding:0;overflow:hidden;background:#081221;display:flex;position:relative}
 .au-stage canvas{display:block;width:100%}
 .au-h{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .au-cnt{font-family:monospace;font-size:12px}
@@ -318,15 +331,18 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     <button class="print-btn" onclick="window.print()">Imprimir reporte</button>
   </div>
 </div>
-<div class="nav">
-  <button class="nav-btn active" onclick="showView('reproduccion',this)">▶ Reproducción</button>
-  <button class="nav-btn" onclick="showView('resumen',this)">Resumen ejecutivo</button>
-  <button class="nav-btn" onclick="showView('controles',this)">7 Controles P2P</button>
-  <button class="nav-btn" onclick="showView('autorizaciones',this)">Autorizaciones</button>
-  <button class="nav-btn" onclick="showView('focos',this)">Focos de atención</button>
-  <button class="nav-btn" onclick="showView('seguimiento',this)">Seguimiento de issues</button>
-  <button class="nav-btn" onclick="showView('riesgo',this)">Mapa de riesgo</button>
-  <button class="nav-btn" onclick="showView('carga',this)">Carga Arbutus</button>
+<div class="nav" role="navigation" aria-label="Navegación principal">
+  <span class="nav-group">Análisis</span>
+  <button class="nav-btn" data-view="resumen" onclick="showView('resumen',this)">Resumen</button>
+  <button class="nav-btn active" data-view="reproduccion" onclick="showView('reproduccion',this)">▶ Ciclo</button>
+  <button class="nav-btn" data-view="controles" onclick="showView('controles',this)">Controles</button>
+  <button class="nav-btn" data-view="autorizaciones" onclick="showView('autorizaciones',this)">▶ Autorizaciones</button>
+  <button class="nav-btn" data-view="riesgo" onclick="showView('riesgo',this)">Mapa</button>
+  <span class="nav-sep" aria-hidden="true"></span>
+  <span class="nav-group">Gestión</span>
+  <button class="nav-btn" data-view="focos" onclick="showView('focos',this)">Focos</button>
+  <button class="nav-btn" data-view="seguimiento" onclick="showView('seguimiento',this)">Seguimiento</button>
+  <button class="nav-btn" data-view="carga" onclick="showView('carga',this)">Origen</button>
 </div>
 
 <div id="view-reproduccion" class="view active">
@@ -376,6 +392,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     <div class="repro-actions" style="margin-top:12px">
       <button class="repro-btn ghost" id="rpReplay">Reproducir de nuevo</button>
       <button class="repro-btn ghost" id="rpSkip">Ir al final</button>
+      <button class="fit-btn" type="button" onclick="window.__fitAll()">Ajustar a pantalla</button>
       <button class="repro-btn" id="rpExplore">Explorar los 7 controles →</button>
     </div>
     <div class="au-note">Recorrido ilustrativo de 12 documentos. La población completa registra 2.600 documentos: 2.080 conformes, 388 desviaciones y 132 excepciones. Cambia al modo Población completa para verla fluir.</div>
@@ -387,10 +404,21 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
       <div class="repro-stage"><canvas id="reproCanvas"></canvas></div>
       <div class="repro-actions">
         <button class="repro-btn ghost" id="reproReplay">Reproducir de nuevo</button>
+        <button class="fit-btn" type="button" onclick="window.__fitAll()">Ajustar a pantalla</button>
         <button class="repro-btn" id="reproExplore">Explorar los 7 controles →</button>
       </div>
       <div id="repro-breakdown" class="repro-breakdown"></div>
     </div>
+  </div>
+
+  <!-- P2P-RISK-01 · análisis de patrones, lectura operativa del ciclo -->
+  <div class="panel pat-host" id="pat-ciclo-host">
+    <div class="panel-hdr">
+      <span class="panel-title">Análisis de patrones · lectura operativa del ciclo</span>
+      <select id="pat-ciclo-sel" onchange="mountPatCiclo()" aria-label="Objetivo de control"></select>
+    </div>
+    <div class="pat-ctx">Los patrones se leen aquí sobre la secuencia del proceso: en qué etapa se origina el hallazgo, qué transacciones lo acompañan y en qué ventana temporal se concentran. La misma información se presenta en el Mapa desde la óptica de exposición al riesgo.</div>
+    <div id="pat-ciclo-body"></div>
   </div>
 </div>
 
@@ -547,7 +575,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     </tr></thead>
     <tbody id="seg-body"></tbody>
   </table></div>
-  <div style="margin-top:10px;font-size:10px;color:var(--muted)">Los issues calificados en la pestana "7 Controles P2P" aparecen aqui automaticamente. Puedes filtrar por periodo de corte para hacer seguimiento entre revisiones.</div>
+  <div style="margin-top:10px;font-size:10px;color:var(--muted)">Los issues calificados en la pestana "Controles" aparecen aqui automaticamente. Puedes filtrar por periodo de corte para hacer seguimiento entre revisiones.</div>
 </div>
 
 <div id="view-riesgo" class="view">
@@ -577,6 +605,16 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     <div id="riesgo-sod"></div>
     <div id="riesgo-gestor" class="rk-bars" style="margin-top:10px"></div>
     <div style="font-size:10px;color:var(--muted);margin-top:10px">Gestor = usuario que crea la orden (ERNAM en EKKO). Aprobador = quien la libera (CDHDR / CDPOS). Pasa el cursor para ver el detalle.</div>
+  </div>
+
+  <!-- P2P-RISK-01 · análisis de patrones, lectura de riesgo -->
+  <div class="panel pat-host" id="pat-mapa-host">
+    <div class="panel-hdr">
+      <span class="panel-title">Análisis de patrones · concentración y materialización del riesgo</span>
+      <select id="pat-mapa-sel" onchange="mountPatMapa()" aria-label="Objetivo de control"></select>
+    </div>
+    <div class="pat-ctx">Los mismos patrones, leídos como exposición: qué proveedor o gestor concentra el monto, con qué recurrencia y con qué materialidad. El componente y la fuente de datos son los mismos que se usan en la vista Ciclo.</div>
+    <div id="pat-mapa-body"></div>
   </div>
 </div>
 <div id="rk-tip" class="rk-tip"></div>
@@ -723,7 +761,7 @@ function buildCtrlList(cid,withDrill){
 }
 
 function navCtrl(i){
-  showView('controles',document.querySelectorAll('.nav-btn')[2]);
+  showView('controles',navBtn('controles'));
   EX.estado=CTRLMETA[i].exc>0?'exc':'desv';EX.ctrl=i;EX.level='txns';
   setTimeout(renderExplore,50);
 }
@@ -765,8 +803,8 @@ function openDrill(i){
     </tr>`;
   });
   html+=`</tbody></table>`;
-  if(c.rows.length<c.exc) html+=`<div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:center;padding:6px;background:var(--bg3);border-radius:5px">Mostrando ${c.rows.length} de ${c.exc.toLocaleString()} excepciones. Carga el TXT completo de Arbutus en la pestana <strong style="color:var(--accent2)">Carga Arbutus</strong> para ver el universo completo.</div>`;
-  html+=`<button class="pat-toggle" onclick="togglePatterns(${i})">Analizar patrones de este control</button><div id="pat-panel-${i}" class="pat-wrap" style="display:none"></div>`;
+  if(c.rows.length<c.exc) html+=`<div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:center;padding:6px;background:var(--bg3);border-radius:5px">Mostrando ${c.rows.length} de ${c.exc.toLocaleString()} excepciones. Carga el TXT completo de Arbutus en la pestana <strong style="color:var(--accent2)">Origen</strong> para ver el universo completo.</div>`;
+  html+=`<button class="pat-toggle" onclick="togglePatterns(${i},'drill')">Analizar patrones de este control</button><div id="pat-panel-drill-${i}" class="pat-wrap" style="display:none"></div>`;
   document.getElementById('dd-content').innerHTML=html;
   dd.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -797,7 +835,7 @@ function renderSeguimiento(){
   const rf=document.getElementById('riesgo-filter').value;
   const tb=document.getElementById('seg-body');tb.innerHTML='';
   const filtered=issues.filter(x=>(pf==='todos'||x.periodo===pf)&&(rf==='todos'||x.calificacion===rf));
-  if(!filtered.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Sin issues registrados para estos filtros. Califica excepciones en la pestana "7 Controles P2P".</td></tr>';return;}
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Sin issues registrados para estos filtros. Califica excepciones en la pestana "Controles".</td></tr>';return;}
   filtered.forEach(x=>{
     const clr=COLOR_RIESGO[x.calificacion]||'var(--muted)';
     tb.innerHTML+=`<tr>
@@ -821,28 +859,75 @@ function exportCSV(){
   a.download='seguimiento_p2p_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
+/* ARCHIVO: index.html · BLOQUE: análisis de patrones (componente reutilizable)
+   P2P-RISK-01. Fuente de datos única: CTRLS[i].rows.
+   Lógica de cálculo única: patProv / patGestor / patTime / patMonto / patMulti.
+   El mismo componente se monta en tres contextos con ámbitos independientes:
+     · 'ex-<i>'    → tabla de transacciones (vista Controles)
+     · 'drill-<i>' → panel de drill-down    (vista Controles)
+     · 'ciclo'     → lectura operativa      (vista Ciclo)
+     · 'mapa'      → lectura de riesgo      (vista Mapa)
+   No se duplican consultas ni cálculos: cada montaje reutiliza las mismas
+   funciones puras sobre el mismo arreglo en memoria. */
 let patState={};
-function togglePatterns(i){
-  const p=document.getElementById('pat-panel-'+i);
+const PAT_TABS=[['prov','Concentración por proveedor'],['gestor','Concentración por gestor'],
+  ['time','Ventana temporal'],['monto','Monto / materialidad'],['multi','Proveedor en varios controles']];
+const PAT_HOSTS=new Map();   // ámbito -> nodo contenedor
+
+function patBodyHTML(i,tab){
+  const c=CTRLS[i], rows=c.rows;
+  const col=c.level==='crit'?'#ef4444':c.level==='warn'?'#f59e0b':'#22c55e';
+  if(tab==='prov')  return patProv(rows,col);
+  if(tab==='gestor')return patGestor(rows,col);
+  if(tab==='time')  return patTime(rows,col,i);
+  if(tab==='monto') return patMonto(rows,col);
+  return patMulti(col);
+}
+function mountPatterns(host,i,scope,defTab){
+  if(!host)return;
+  PAT_HOSTS.set(scope,host);
+  const key=scope+':'+i;
+  const tab=patState[key]||defTab||'prov';
+  patState[key]=tab;
+  host.dataset.ctrl=i;
+  host.innerHTML=`<div class="pat-tabs">`+
+    PAT_TABS.map(t=>`<button class="pat-tab ${tab===t[0]?'on':''}" onclick="setPatTab('${scope}',${i},'${t[0]}')">${t[1]}</button>`).join('')+
+    `</div><div class="pat-body"></div>`;
+  host.querySelector('.pat-body').innerHTML=patBodyHTML(i,tab);
+}
+function setPatTab(scope,i,t){
+  patState[scope+':'+i]=t;
+  const host=PAT_HOSTS.get(scope);
+  if(host)mountPatterns(host,i,scope);
+}
+/* site: 'ex' (tabla de transacciones) | 'drill' (panel de drill-down).
+   Antes ambos usaban el mismo id pat-panel-<i>: ids duplicados en el DOM. */
+function togglePatterns(i,site){
+  const p=document.getElementById('pat-panel-'+site+'-'+i);
   if(!p)return;
-  if(p.style.display==='none'){p.style.display='block';patState[i]=patState[i]||'prov';renderPatterns(i);}
+  if(p.style.display==='none'){p.style.display='block';mountPatterns(p,i,site+'-'+i,'prov');}
   else p.style.display='none';
 }
-function setPatTab(i,t){patState[i]=t;renderPatterns(i);}
-function renderPatterns(i){
-  const c=CTRLS[i], tab=patState[i]||'prov', rows=c.rows;
-  const tabs=[['prov','Concentración por proveedor'],['gestor','Concentración por gestor'],['time','Ventana temporal'],['monto','Monto / materialidad'],['multi','Proveedor en varios controles']];
-  document.getElementById('pat-panel-'+i).innerHTML=`<div class="pat-tabs">`+
-    tabs.map(t=>`<button class="pat-tab ${tab===t[0]?'on':''}" onclick="setPatTab(${i},'${t[0]}')">${t[1]}</button>`).join('')+
-    `</div><div id="pat-body-${i}"></div>`;
-  const body=document.getElementById('pat-body-'+i);
-  const col=c.level==='crit'?'#ef4444':c.level==='warn'?'#f59e0b':'#22c55e';
-  if(tab==='prov')body.innerHTML=patProv(rows,col);
-  else if(tab==='gestor')body.innerHTML=patGestor(rows,col);
-  else if(tab==='time')body.innerHTML=patTime(rows,col,i);
-  else if(tab==='monto')body.innerHTML=patMonto(rows,col);
-  else body.innerHTML=patMulti(col);
+
+/* --- Montaje contextual en Ciclo y en Mapa ----------------------------- */
+function patSelectorHTML(id){
+  return `<select id="${id}" aria-label="Objetivo de control">`+
+    CTRLS.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('')+`</select>`;
 }
+function mountPatCiclo(){
+  const sel=document.getElementById('pat-ciclo-sel');
+  const host=document.getElementById('pat-ciclo-body');
+  if(!sel||!host)return;
+  mountPatterns(host,Number(sel.value||0),'ciclo','time');
+}
+function mountPatMapa(){
+  const sel=document.getElementById('pat-mapa-sel');
+  const host=document.getElementById('pat-mapa-body');
+  if(!sel||!host)return;
+  mountPatterns(host,Number(sel.value||0),'mapa','prov');
+}
+window.mountPatCiclo=mountPatCiclo;
+window.mountPatMapa=mountPatMapa;
 function patProv(rows,col){
   const g={}; rows.forEach(r=>{const u=parseMonto(r.monto);(g[r.lifnr]=g[r.lifnr]||{n:0,usd:0});g[r.lifnr].n++;g[r.lifnr].usd+=u;});
   const arr=Object.entries(g).map(([p,v])=>({p,...v})).sort((a,b)=>b.usd-a.usd);
@@ -960,11 +1045,11 @@ function showScoreDetail(i,ri){
 function closeScoreModal(){const m=document.getElementById('score-modal');if(m)m.classList.remove('open');}
 window.showScoreDetail=showScoreDetail;window.closeScoreModal=closeScoreModal;
 let EX={estado:'exc',ctrl:null,level:'controls'};
-function goExplore(){showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado:'exc',ctrl:null,level:'controls'};renderExplore();}
+function goExplore(){showView('controles',navBtn('controles'));EX={estado:'exc',ctrl:null,level:'controls'};renderExplore();}
 window.__goExplore=goExplore;
-function goExploreState(estado){showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado,ctrl:null,level:'controls'};renderExplore();}
+function goExploreState(estado){showView('controles',navBtn('controles'));EX={estado,ctrl:null,level:'controls'};renderExplore();}
 window.__goExploreState=goExploreState;
-window.__drillTo=(i,estado)=>{showView('controles',document.querySelectorAll('.nav-btn')[2]);EX={estado,ctrl:i,level:'txns'};renderExplore();};
+window.__drillTo=(i,estado)=>{showView('controles',navBtn('controles'));EX={estado,ctrl:i,level:'txns'};renderExplore();};
 const WHY={
  0:{desv:'PO regularizada sin PR previa',exc:'Compra sin requisición autorizada'},
  1:{desv:'Aprobada con un nivel de dos',exc:'Sin aprobación sobre el umbral de monto'},
@@ -1092,8 +1177,8 @@ function exTxns(){
   const list=c.rows.map((r,ri)=>({r,ri})).filter(o=>R2S[o.r.riesgo]===estado).map(o=>({...o,sc:scoreRow(o.r)})).sort((a,b)=>b.sc-a.sc);
   const nm=c.name.replace(/^C\d+\s·\s/,'');
   let h=`<div class="ex-tools"><div class="ex-ttl">C${i+1} · ${nm} <span style="color:var(--muted);font-weight:400;font-size:12px">· ${m.tablas}</span></div>
-    <button class="pat-toggle" onclick="togglePatterns(${i})" style="margin:0">Analizar patrones →</button></div>
-    <div id="pat-panel-${i}" class="pat-wrap" style="display:none;border-top:none;padding-top:0;margin:0 0 12px"></div>
+    <button class="pat-toggle" onclick="togglePatterns(${i},'ex')" style="margin:0">Analizar patrones →</button></div>
+    <div id="pat-panel-ex-${i}" class="pat-wrap" style="display:none;border-top:none;padding-top:0;margin:0 0 12px"></div>
     <div class="ex-info" style="margin:0 0 8px">Mostrando ${list.length} casos representativos de ${m[estado].toLocaleString('es-EC')} · ordenados por score de riesgo. Califica y guarda una o varias transacciones.</div>
     <div style="overflow-x:auto"><table class="exc-table"><thead><tr>
     <th>Documento</th><th>Proveedor</th><th>Gestor</th><th>Monto</th><th>Fecha</th><th>Controles</th><th>Hallazgo</th><th>Score</th>
@@ -1274,6 +1359,21 @@ function closeDrill(){
   document.querySelectorAll('.ctrl-row').forEach(r=>r.classList.remove('active-ctrl'));
 }
 
+/* ARCHIVO: index.html · BLOQUE: navegación
+   navBtn() sustituye a document.querySelectorAll('.nav-btn')[2], que dependía
+   de la posición del botón dentro del menú y se rompía al reagrupar la barra. */
+function navBtn(view){ return document.querySelector('.nav-btn[data-view="'+view+'"]'); }
+window.navBtn=navBtn;
+
+/* Poblado de los selectores de control de los paneles de patrones (Ciclo y Mapa) */
+(function initPatSelectors(){
+  const opts=CTRLS.map((c,i)=>`<option value="${i}">${c.name}</option>`).join('');
+  const a=document.getElementById('pat-ciclo-sel'), b=document.getElementById('pat-mapa-sel');
+  if(a){a.innerHTML=opts;a.value='3';}   // C4 · 3-Way Match, el de mayor exposición
+  if(b){b.innerHTML=opts;b.value='3';}
+  if(typeof mountPatCiclo==='function')mountPatCiclo();
+})();
+
 function showView(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1284,11 +1384,14 @@ function showView(id,btn){
     const sm=document.getElementById('rp-stepmode');
     if(sm&&sm.style.display!=='none'){if(window.__rpReset)window.__rpReset();}
     else {if(window.__reproResize)window.__reproResize();renderBreakdown();}
+    mountPatCiclo();                       // P2P-RISK-01
   }
   if(id==='controles')renderExplore();
-  if(id==='riesgo')renderRiesgo();
+  if(id==='riesgo'){renderRiesgo();mountPatMapa();}   // P2P-RISK-01
   if(id==='focos')renderFocos();
   if(id==='autorizaciones'&&window.__auReset)window.__auReset();
+  // P2P-VIS-01: al activar una vista, el canvas ya es medible; se reajusta.
+  if(window.P2PRT)requestAnimationFrame(()=>P2PRT.fitAll());
 }
 
 function buildRiskMeter(){
@@ -1412,11 +1515,178 @@ new Chart(document.getElementById('donutChart'),{
 /* Mapa de riesgo reconstruido con visualizaciones propias interactivas (renderRiesgo) */
 </script>
 <script>
+/* =========================================================================
+   ARCHIVO: index.html · BLOQUE: núcleo de estabilidad (P2PRT)
+   Añadido para P2P-TEC-01. No contiene lógica de negocio.
+   Responsabilidades:
+     1. Un único bucle requestAnimationFrame por canvas (evita acumulación).
+     2. Contención de errores: una excepción de dibujo no mata el tablero.
+     3. Recuperación de pérdida de contexto del canvas.
+     4. Reajuste al volver la pestaña visible o al cambiar el tamaño.
+     5. Estado alternativo de error en lugar de un lienzo negro.
+   ========================================================================= */
+window.P2PRT = (() => {
+  "use strict";
+  const loops = new Map();   // clave -> id de rAF vigente
+  const reg   = new Map();   // clave -> {cvs, host, size, restart}
+  let bannerEl = null;
+
+  /* --- utilidades de tamaño --------------------------------------------- */
+  function hostWidth(host, fallback){
+    const w = host && host.clientWidth;
+    return (w && w > 0) ? w : fallback;
+  }
+  // Altura útil hasta el borde inferior de la ventana, reservando margen.
+  function availableHeight(host, reserve, min){
+    let top = 0;
+    try { const r = host.getBoundingClientRect(); top = r.top > 0 ? r.top : 0; } catch(e){}
+    const h = (window.innerHeight || 800) - top - (reserve || 160);
+    return Math.max(min || 260, Math.round(h));
+  }
+
+  /* --- bucle de animación de propietario único --------------------------- */
+  function stop(key){
+    const id = loops.get(key);
+    if (id) cancelAnimationFrame(id);
+    loops.delete(key);
+  }
+  function start(key, frame){
+    stop(key);                                   // cancela el bucle anterior
+    const entry = reg.get(key);
+    const step = ts => {
+      if (!loops.has(key)) return;               // fue detenido
+      // No dibujar si el canvas no está visible: ahorra CPU/GPU sin perder estado
+      if (entry && entry.cvs && entry.cvs.offsetParent === null){
+        loops.set(key, requestAnimationFrame(step));
+        return;
+      }
+      let cont;
+      try { cont = frame(ts); }
+      catch (err){ stop(key); fail(key, err); return; }
+      if (cont === false){ loops.delete(key); return; }
+      loops.set(key, requestAnimationFrame(step));
+    };
+    loops.set(key, requestAnimationFrame(step));
+  }
+  const isRunning = key => loops.has(key);
+
+  /* --- estado alternativo de error --------------------------------------- */
+  function fail(key, err){
+    console.error('[P2P] fallo de render en "' + key + '"', err);
+    const e = reg.get(key);
+    if (e) showError(e.host, key);
+    banner('Un gráfico dejó de responder y se aisló. El resto del tablero sigue operativo.');
+  }
+  function showError(host, key){
+    if (!host || host.querySelector('.cv-host-err')) return;
+    const d = document.createElement('div');
+    d.className = 'cv-host-err';
+    d.innerHTML = '<b>El gráfico no pudo dibujarse</b>' +
+      '<small>Se aisló para no afectar al resto del tablero. El detalle técnico quedó registrado en la consola del navegador.</small>' +
+      '<button type="button">Reintentar</button>';
+    d.querySelector('button').onclick = () => { clearError(host); retry(key); };
+    host.appendChild(d);
+  }
+  function clearError(host){
+    if (!host) return;
+    const e = host.querySelector('.cv-host-err');
+    if (e) e.remove();
+  }
+  function retry(key){
+    const e = reg.get(key);
+    if (!e) return;
+    try { e.size(); e.restart(); }
+    catch (err){ fail(key, err); }
+  }
+  function banner(msg){
+    if (bannerEl) return;
+    bannerEl = document.createElement('div');
+    bannerEl.className = 'rt-banner';
+    bannerEl.innerHTML = '<span></span><button type="button" aria-label="Cerrar">&times;</button>';
+    bannerEl.querySelector('span').textContent = msg;
+    bannerEl.querySelector('button').onclick = () => { bannerEl.remove(); bannerEl = null; };
+    document.body.appendChild(bannerEl);
+  }
+
+  /* --- registro de canvas ------------------------------------------------ */
+  function registerCanvas(key, cvs, size, restart){
+    const host = cvs.parentElement;
+    reg.set(key, {cvs, host, size, restart});
+
+    // Reajuste por cambio de tamaño del contenedor (sustituye a window.resize)
+    let t = null;
+    if (typeof ResizeObserver === 'function'){
+      const ro = new ResizeObserver(() => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          if (cvs.offsetParent === null) return;   // contenedor oculto: no medir
+          if (!host.clientWidth) return;           // tamaño inválido: no dibujar
+          try { size(); } catch(err){ fail(key, err); }
+        }, 120);
+      });
+      ro.observe(host);
+    } else {
+      window.addEventListener('resize', () => {
+        clearTimeout(t);
+        t = setTimeout(() => { if (cvs.offsetParent) { try{ size(); }catch(err){ fail(key,err); } } }, 120);
+      });
+    }
+
+    // Pérdida y recuperación del contexto de dibujo (bloqueo de pantalla, reset de GPU)
+    cvs.addEventListener('contextlost', ev => {
+      ev.preventDefault();                 // permite la restauración posterior
+      stop(key);
+      console.warn('[P2P] contexto de canvas perdido en "' + key + '"');
+    });
+    cvs.addEventListener('contextrestored', () => {
+      console.warn('[P2P] contexto de canvas restaurado en "' + key + '"');
+      clearError(host);
+      retry(key);
+    });
+  }
+
+  // Al recuperar visibilidad, remedir y repintar los canvas visibles.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    reg.forEach((e, key) => {
+      if (e.cvs.offsetParent === null) return;
+      try { e.size(); if (!isRunning(key)) e.restart(); }
+      catch (err){ fail(key, err); }
+    });
+  });
+  window.addEventListener('pageshow', () => {
+    reg.forEach((e, key) => { if (e.cvs.offsetParent) { try{ e.size(); }catch(err){ fail(key,err); } } });
+  });
+
+  // Reajuste explícito de todos los canvas visibles (botón "Ajustar a pantalla")
+  function fitAll(){
+    reg.forEach((e, key) => {
+      if (e.cvs.offsetParent === null) return;
+      try { clearError(e.host); e.size(); if (!isRunning(key)) e.restart(); }
+      catch (err){ fail(key, err); }
+    });
+  }
+
+  /* --- errores no controlados: nunca dejar la vista en negro -------------- */
+  window.addEventListener('error', ev => {
+    console.error('[P2P] error no controlado', ev.message, ev.filename + ':' + ev.lineno);
+    banner('Se registró un error en la consola. El tablero sigue operativo.');
+  });
+  window.addEventListener('unhandledrejection', ev => {
+    console.error('[P2P] promesa rechazada sin manejar', ev.reason);
+  });
+
+  return {start, stop, isRunning, registerCanvas, fitAll, hostWidth, availableHeight, banner};
+})();
+window.__fitAll = () => window.P2PRT.fitAll();
+</script>
+<script>
 /* ===== Animación de reproducción: recorrido end-to-end del flujo P2P ===== */
 (() => {
   "use strict";
   const cvs=document.getElementById('reproCanvas'); if(!cvs) return;
   const ctx=cvs.getContext('2d');
+  const KEY='ciclo-poblacion';
   const CO={bg0:'#081221',bg1:'#0b1a30',ink:'#e2e8f0',dim:'#7d95b0',faint:'#4c627e',
     line:'rgba(255,255,255,0.10)',rail:'rgba(120,150,190,0.28)',accent:'#2a8fff',
     conf:'#22c55e',desv:'#f59e0b',exc:'#ef4444',neutral:'#8aa0bb'};
@@ -1435,10 +1705,15 @@ new Chart(document.getElementById('donutChart'),{
   const DESV_AT=[1,2,3,4], EXC_AT=[1,3,4,5]; // estaciones donde se bifurcan
 
   let W,H,DPR,L={};
+  // P2P-VIS-01: la altura se limita al alto útil de la ventana para que el ciclo
+  // completo entre en una sola pantalla, con un mínimo que preserva la legibilidad.
   function size(){
-    const host=cvs.parentElement, cw=Math.max(320,Math.min(host.clientWidth||900,940));
-    W=cw; H=Math.round(cw*0.60);
+    const host=cvs.parentElement;
+    const cw=Math.max(320,Math.min(P2PRT.hostWidth(host,900),940));
+    const maxH=P2PRT.availableHeight(host,150,300);
+    W=cw; H=Math.max(300,Math.min(Math.round(cw*0.60),maxH));
     DPR=Math.min(window.devicePixelRatio||1,2);
+    if(!W||!H)return;                                  // tamaño inválido: no dibujar
     cvs.width=Math.round(W*DPR);cvs.height=Math.round(H*DPR);cvs.style.height=H+'px';
     ctx.setTransform(DPR,0,0,DPR,0,0);layout();
   }
@@ -1582,9 +1857,11 @@ new Chart(document.getElementById('donutChart'),{
     items.forEach(([k,lab2])=>{ctx.fillStyle=stCol(k);ctx.beginPath();ctx.arc(lx+5,ly-4,5,0,7);ctx.fill();
       ctx.fillStyle=CO.dim;ctx.fillText(lab2,lx+15,ly);lx+=18+ctx.measureText(lab2).width+18;});
   }
-  function frame(ts){if(!running)return;if(!startT){startT=ts;lastT=ts;}const now=(ts-startT)/1000;let dt=(ts-lastT)/1000;lastT=ts;dt=Math.min(dt,0.05);
-    if(!finished||pulseArr.length||Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)>=3)update(dt,now);draw(now);requestAnimationFrame(frame);}
-  function start(){running=true;startT=0;lastT=0;requestAnimationFrame(frame);}
+  // El bucle ya no se reprograma a sí mismo: lo administra P2PRT (propietario único).
+  function frame(ts){if(!running)return false;if(!W||!H)return;
+    if(!startT){startT=ts;lastT=ts;}const now=(ts-startT)/1000;let dt=(ts-lastT)/1000;lastT=ts;dt=Math.min(dt,0.05);
+    if(!finished||pulseArr.length||Math.abs((shown.conf+shown.desv+shown.exc)-TARGET.total)>=3)update(dt,now);draw(now);}
+  function start(){running=true;startT=0;lastT=0;P2PRT.start(KEY,frame);}
   window.__reproReset=()=>{size();reset();start();};
   window.__reproResize=()=>{size();};
   const rb=document.getElementById('reproReplay');if(rb)rb.onclick=()=>{size();reset();start();};
@@ -1594,7 +1871,7 @@ new Chart(document.getElementById('donutChart'),{
   function canvasXY(e){const rect=cvs.getBoundingClientRect();return {x:(e.clientX-rect.left)*(W/rect.width),y:(e.clientY-rect.top)*(H/rect.height)};}
   cvs.addEventListener('click',e=>{const {x,y}=canvasXY(e);const s=hitAt(x,y);if(s&&window.__goExploreState)window.__goExploreState(s);});
   cvs.addEventListener('mousemove',e=>{const {x,y}=canvasXY(e);cvs.style.cursor=hitAt(x,y)?'pointer':'default';});
-  window.addEventListener('resize',()=>size());
+  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
   size();reset();start();
 })();
 </script>
@@ -1604,6 +1881,7 @@ new Chart(document.getElementById('donutChart'),{
   "use strict";
   const cvs=document.getElementById('auCanvas'); if(!cvs) return;
   const ctx=cvs.getContext('2d');
+  const KEY='autorizaciones';
   const C={bg0:'#081221',bg1:'#0b1a30',ink:'#e2e8f0',dim:'#7d95b0',faint:'#4c627e',
     rail:'rgba(120,150,190,0.30)',ok:'#22c55e',warn:'#f59e0b',crit:'#ef4444',accent:'#2a8fff'};
   const LV=[
@@ -1644,9 +1922,12 @@ new Chart(document.getElementById('donutChart'),{
   let cnt={con:0,rep:0,exc:0},usd=0,parked=[];
 
   function size(){
-    const host=cvs.parentElement,cw=Math.max(300,host.clientWidth||620);
-    W=cw;H=Math.max(420,Math.round(cw*0.80));
+    const host=cvs.parentElement;
+    const cw=Math.max(300,P2PRT.hostWidth(host,620));
+    const maxH=P2PRT.availableHeight(host,120,360);
+    W=cw;H=Math.max(360,Math.min(Math.max(420,Math.round(cw*0.80)),maxH));
     DPR=Math.min(window.devicePixelRatio||1,2);
+    if(!W||!H)return;
     cvs.width=Math.round(W*DPR);cvs.height=Math.round(H*DPR);cvs.style.height=H+'px';
     ctx.setTransform(DPR,0,0,DPR,0,0);layout();
   }
@@ -1822,13 +2103,13 @@ new Chart(document.getElementById('donutChart'),{
     ctx.fillText('cada liberación deja su anillo de color en la OC',14,H-12);
   }
   function frame(ts){
-    if(!run)return;
+    if(!run)return false;
+    if(!W||!H)return;
     if(!t0){t0=ts;last=ts;}
     let dt=(ts-last)/1000;last=ts;dt=Math.min(dt,0.05);
     update(dt);draw((ts-t0)/1000);
-    requestAnimationFrame(frame);
   }
-  function start(){run=true;t0=0;last=0;requestAnimationFrame(frame);}
+  function start(){run=true;t0=0;last=0;P2PRT.start(KEY,frame);}
   function skipAll(){
     while(ph!=='done'){
       if(!sph){next();if(ph==='done')break;}
@@ -1851,7 +2132,7 @@ new Chart(document.getElementById('donutChart'),{
   const rb=document.getElementById('auReplay');if(rb)rb.onclick=()=>window.__auReset();
   const sk=document.getElementById('auSkip');if(sk)sk.onclick=()=>{skipAll();};
   const dr=document.getElementById('auDrill');if(dr)dr.onclick=()=>window.__drillTo&&window.__drillTo(1,'exc');
-  window.addEventListener('resize',()=>{if(document.getElementById('view-autorizaciones').classList.contains('active'))size();});
+  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
   doa();size();renderCounters();
 })();
 </script>
@@ -1861,6 +2142,7 @@ new Chart(document.getElementById('donutChart'),{
   "use strict";
   const cvs=document.getElementById('rpCanvas'); if(!cvs) return;
   const ctx=cvs.getContext('2d');
+  const KEY='ciclo-documento';
   const C={bg0:'#081221',bg1:'#0b1a30',ink:'#e2e8f0',dim:'#7d95b0',faint:'#4c627e',
     rail:'rgba(120,150,190,0.30)',ok:'#22c55e',warn:'#f59e0b',crit:'#ef4444',accent:'#2a8fff',neutral:'#8aa0bb'};
   const ST=[
@@ -1904,9 +2186,12 @@ new Chart(document.getElementById('donutChart'),{
   const SPEED=520, EVAL=0.16, FAILT=0.55, FLY=0.35;
 
   function size(){
-    const host=cvs.parentElement,cw=Math.max(320,host.clientWidth||620);
-    W=cw;H=Math.max(400,Math.round(cw*0.72));
+    const host=cvs.parentElement;
+    const cw=Math.max(320,P2PRT.hostWidth(host,620));
+    const maxH=P2PRT.availableHeight(host,120,340);
+    W=cw;H=Math.max(340,Math.min(Math.max(400,Math.round(cw*0.72)),maxH));
     DPR=Math.min(window.devicePixelRatio||1,2);
+    if(!W||!H)return;
     cvs.width=Math.round(W*DPR);cvs.height=Math.round(H*DPR);cvs.style.height=H+'px';
     ctx.setTransform(DPR,0,0,DPR,0,0);layout();
   }
@@ -2076,10 +2361,11 @@ new Chart(document.getElementById('donutChart'),{
     ctx.textAlign='left';ctx.fillStyle=C.faint;ctx.font='500 9px monospace';
     ctx.fillText('cada etapa evalúa sus controles: ✓ supera · ✗ incumple',14,H-12);
   }
-  function frame(ts){if(!run)return;if(!t0){t0=ts;last=ts;}
+  function frame(ts){if(!run)return false;if(!W||!H)return;
+    if(!t0){t0=ts;last=ts;}
     let dt=(ts-last)/1000;last=ts;dt=Math.min(dt,0.05);
-    update(dt);draw();requestAnimationFrame(frame);}
-  function start(){run=true;t0=0;last=0;requestAnimationFrame(frame);}
+    update(dt);draw();}
+  function start(){run=true;t0=0;last=0;P2PRT.start(KEY,frame);}
   function skipAll(){
     while(ph!=='done'){
       if(!sph){next();if(ph==='done')break;}
@@ -2095,7 +2381,7 @@ new Chart(document.getElementById('donutChart'),{
   const a=document.getElementById('rpReplay');if(a)a.onclick=()=>window.__rpReset();
   const b=document.getElementById('rpSkip');if(b)b.onclick=()=>skipAll();
   const c2=document.getElementById('rpExplore');if(c2)c2.onclick=()=>window.__goExplore&&window.__goExplore();
-  window.addEventListener('resize',()=>{const v=document.getElementById('rp-stepmode');if(v&&v.style.display!=='none')size();});
+  P2PRT.registerCanvas(KEY,cvs,size,()=>{reset();start();});
   ctrlList();size();counters();reset();start();
 })();
 
