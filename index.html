@@ -185,6 +185,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .ex-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 6px;flex-wrap:wrap}
 .ex-ttl{font-weight:700;font-size:15px}
 .exscore{font-weight:800;padding:2px 8px;border-radius:6px;font-size:12px;font-family:monospace}
+.sod-chip{display:inline-block;font-family:monospace;font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;background:rgba(239,68,68,.16);color:var(--crit);border:1px solid rgba(239,68,68,.4)}
 .chipc{display:inline-block;font-family:monospace;font-size:10px;padding:1px 5px;border-radius:4px;border:1px solid var(--border);margin-left:2px;color:var(--muted)}
 .ex-info{font-size:12px;color:var(--muted);margin:2px 0 12px;line-height:1.5}
 .ex-note{background:var(--bg3);border-radius:8px;padding:16px;font-size:12px;color:var(--muted);line-height:1.6}
@@ -571,6 +572,12 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
     <div id="riesgo-matriz"></div>
     <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:4px">Cantidad de excepciones →&nbsp;&nbsp;·&nbsp;&nbsp;clic en una burbuja para ir al control</div>
   </div>
+  <div class="panel" style="margin-top:10px">
+    <div class="panel-hdr"><span class="panel-title">Concentración por gestor · quién origina los hallazgos</span></div>
+    <div id="riesgo-sod"></div>
+    <div id="riesgo-gestor" class="rk-bars" style="margin-top:10px"></div>
+    <div style="font-size:10px;color:var(--muted);margin-top:10px">Gestor = usuario que crea la orden (ERNAM en EKKO). Aprobador = quien la libera (CDHDR / CDPOS). Pasa el cursor para ver el detalle.</div>
+  </div>
 </div>
 <div id="rk-tip" class="rk-tip"></div>
 
@@ -691,6 +698,14 @@ CTRLS.forEach((c,ci)=>{
   }
 });
 const XMAP={'100512':['C2','C4','C5'],'100891':['C1','C6'],'100234':['C5','C4','C1']};
+/* Gestor (creador de la OC, ERNAM en EKKO) y aprobador (liberación, CDHDR/CDPOS).
+   Se planta concentración en jcampos y casos de segregación de funciones (crea y aprueba). */
+const GESTW=['jcampos','jcampos','jcampos','jcampos','jcampos','mreyes','mreyes','mreyes','lortega','lortega','pvaldez','snunez','rmendez'];
+const APROB=['agomez','fsalas','dcastro','mvera'];
+CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{
+  if(!r.gestor)r.gestor=_pick(GESTW);
+  if(!r.aprobador)r.aprobador=(_r()<0.14)?r.gestor:_pick(APROB);   // mismo usuario crea y libera
+}));
 CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{ const ex=XMAP[r.lifnr];
   if(ex&&_r()<0.35){ const add=_pick(ex.filter(x=>x!=='C'+(ci+1))); if(add&&!r.controles.includes(add))r.controles.push(add); } }));
 
@@ -816,13 +831,14 @@ function togglePatterns(i){
 function setPatTab(i,t){patState[i]=t;renderPatterns(i);}
 function renderPatterns(i){
   const c=CTRLS[i], tab=patState[i]||'prov', rows=c.rows;
-  const tabs=[['prov','Concentración por proveedor'],['time','Ventana temporal'],['monto','Monto / materialidad'],['multi','Proveedor en varios controles']];
+  const tabs=[['prov','Concentración por proveedor'],['gestor','Concentración por gestor'],['time','Ventana temporal'],['monto','Monto / materialidad'],['multi','Proveedor en varios controles']];
   document.getElementById('pat-panel-'+i).innerHTML=`<div class="pat-tabs">`+
     tabs.map(t=>`<button class="pat-tab ${tab===t[0]?'on':''}" onclick="setPatTab(${i},'${t[0]}')">${t[1]}</button>`).join('')+
     `</div><div id="pat-body-${i}"></div>`;
   const body=document.getElementById('pat-body-'+i);
   const col=c.level==='crit'?'#ef4444':c.level==='warn'?'#f59e0b':'#22c55e';
   if(tab==='prov')body.innerHTML=patProv(rows,col);
+  else if(tab==='gestor')body.innerHTML=patGestor(rows,col);
   else if(tab==='time')body.innerHTML=patTime(rows,col,i);
   else if(tab==='monto')body.innerHTML=patMonto(rows,col);
   else body.innerHTML=patMulti(col);
@@ -833,6 +849,25 @@ function patProv(rows,col){
   const tot=arr.reduce((s,x)=>s+x.usd,0)||1, max=arr[0]?arr[0].usd:1; let h='';
   if(arr[0])h+=`<div class="pat-insight">El proveedor <b>${arr[0].p}</b> concentra <b>${arr[0].n}</b> hallazgos por <b>USD ${_fmt(arr[0].usd)}</b> — el <b>${Math.round(arr[0].usd/tot*100)}%</b> del monto de este control.</div>`;
   arr.slice(0,7).forEach(x=>h+=`<div class="pbar-row"><div class="pbar-k">${x.p}</div><div class="pbar-track"><div class="pbar-fill" style="width:${Math.round(x.usd/max*100)}%;background:${col}"></div></div><div class="pbar-v">USD ${_fmt(x.usd)} · ${x.n}</div></div>`);
+  return h;
+}
+function patGestor(rows,col){
+  const g={}; rows.forEach(r=>{const u=parseMonto(r.monto);
+    (g[r.gestor]=g[r.gestor]||{n:0,usd:0,sod:0});g[r.gestor].n++;g[r.gestor].usd+=u;
+    if(r.aprobador===r.gestor)g[r.gestor].sod++;});
+  const arr=Object.entries(g).map(([p,v])=>({p,...v})).sort((a,b)=>b.n-a.n);
+  const tot=arr.reduce((s,x)=>s+x.n,0)||1, max=arr[0]?arr[0].n:1;
+  const sod=rows.filter(r=>r.aprobador===r.gestor);
+  const sodUsd=sod.reduce((s,r)=>s+parseMonto(r.monto),0);
+  let h='';
+  if(arr[0])h+=`<div class="pat-insight">El gestor <b>${arr[0].p}</b> originó <b>${arr[0].n}</b> de los <b>${tot}</b> hallazgos de este control — el <b>${Math.round(arr[0].n/tot*100)}%</b> — por <b>USD ${_fmt(arr[0].usd)}</b>. La causa raíz apunta a la persona, no al proveedor.</div>`;
+  if(sod.length)h+=`<div class="pat-insight" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3)"><b style="color:var(--crit)">Segregación de funciones.</b> En <b>${sod.length}</b> documento${sod.length===1?'':'s'} (USD ${_fmt(sodUsd)}) el mismo usuario <b>creó y liberó</b> la orden. Es un incumplimiento de control por diseño, con independencia del monto.</div>`;
+  h+=`<table class="pmx" style="margin-top:4px"><thead><tr><th class="prov" style="text-align:left">Gestor</th><th style="width:45%"></th><th>Hallazgos</th><th>USD</th><th>Crea y aprueba</th></tr></thead><tbody>`;
+  arr.slice(0,8).forEach(x=>h+=`<tr><td class="prov">${x.p}</td>
+    <td><div class="pbar-track"><div class="pbar-fill" style="width:${Math.round(x.n/max*100)}%;background:${col}"></div></div></td>
+    <td>${x.n}</td><td>${_fmt(x.usd)}</td>
+    <td style="color:${x.sod?'var(--crit)':'var(--muted)'};font-weight:${x.sod?'700':'400'}">${x.sod||'·'}</td></tr>`);
+  h+=`</tbody></table>`;
   return h;
 }
 function patTime(rows,col,i){
@@ -966,7 +1001,25 @@ document.addEventListener('mousemove',e=>{const el=e.target.closest&&e.target.cl
 function provAgg(){const g={};
   CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{const u=parseMonto(r.monto);(g[r.lifnr]=g[r.lifnr]||{n:0,usd:0,ctrls:new Set(),firstCtrl:ci});g[r.lifnr].n++;g[r.lifnr].usd+=u;(r.controles||['C'+(ci+1)]).forEach(x=>g[r.lifnr].ctrls.add(x));}));
   return Object.entries(g).map(([p,v])=>({p,n:v.n,usd:v.usd,ctrls:[...v.ctrls].sort(),firstCtrl:v.firstCtrl})).sort((a,b)=>b.usd-a.usd);}
-function renderRiesgo(){renderRkControles();renderRkProv();renderRkMatriz();}
+function renderRiesgo(){renderRkControles();renderRkProv();renderRkMatriz();renderRkGestor();}
+function gestorAgg(){const g={};
+  CTRLS.forEach((c,ci)=>c.rows.forEach(r=>{const u=parseMonto(r.monto);
+    (g[r.gestor]=g[r.gestor]||{n:0,usd:0,sod:0,ctrls:new Set(),firstCtrl:ci});
+    g[r.gestor].n++;g[r.gestor].usd+=u;g[r.gestor].ctrls.add('C'+(ci+1));
+    if(r.aprobador===r.gestor)g[r.gestor].sod++;}));
+  return Object.entries(g).map(([p,v])=>({p,n:v.n,usd:v.usd,sod:v.sod,ctrls:[...v.ctrls].sort(),firstCtrl:v.firstCtrl}))
+    .sort((a,b)=>b.n-a.n);}
+function renderRkGestor(){
+  const el=document.getElementById('riesgo-gestor'),sd=document.getElementById('riesgo-sod');
+  if(!el)return;
+  const arr=gestorAgg(),tot=arr.reduce((s,x)=>s+x.n,0)||1,max=arr[0]?arr[0].n:1;
+  const sodN=arr.reduce((s,x)=>s+x.sod,0);
+  if(sd)sd.innerHTML=`<div class="pat-insight" style="margin:0 0 4px">El gestor <b>${arr[0].p}</b> origina el <b>${Math.round(arr[0].n/tot*100)}%</b> de los hallazgos (${arr[0].n} de ${tot}) por <b>USD ${_fmt(arr[0].usd)}</b>.</div>`+
+    (sodN?`<div class="pat-insight" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);margin:0"><b style="color:var(--crit)">Segregación de funciones:</b> en <b>${sodN}</b> documento${sodN===1?'':'s'} el mismo usuario creó y liberó la orden.</div>`:'');
+  el.innerHTML=arr.slice(0,8).map(x=>{const col=x.sod?'var(--crit)':x.ctrls.length>=4?'var(--warn)':'var(--accent2)';
+    const tip=`<b>${x.p}</b><br>${x.n} hallazgos · USD ${Math.round(x.usd).toLocaleString('es-EC')}<br>Aparece en ${x.ctrls.length} controles: ${x.ctrls.join(' ')}<br>${x.sod?`<span style="color:var(--crit)">Crea y aprueba en ${x.sod} documentos</span><br>`:''}<span style="color:var(--muted)">clic para ver sus transacciones</span>`.replace(/"/g,'&quot;');
+    return `<div class="rk-row" data-tip="${tip}" onclick="window.__drillTo(${x.firstCtrl},'exc')"><span class="rk-k">${x.p}</span><div class="rk-track"><div class="rk-fill" style="width:${Math.round(x.n/max*100)}%;background:${col}"></div></div><span class="rk-v">${x.n} · $${(x.usd/1000).toFixed(1)}K</span></div>`;}).join('');
+}
 window.__renderRiesgo=renderRiesgo;
 function renderRkControles(){
   const el=document.getElementById('riesgo-controles');if(!el)return;
@@ -1043,7 +1096,7 @@ function exTxns(){
     <div id="pat-panel-${i}" class="pat-wrap" style="display:none;border-top:none;padding-top:0;margin:0 0 12px"></div>
     <div class="ex-info" style="margin:0 0 8px">Mostrando ${list.length} casos representativos de ${m[estado].toLocaleString('es-EC')} · ordenados por score de riesgo. Califica y guarda una o varias transacciones.</div>
     <div style="overflow-x:auto"><table class="exc-table"><thead><tr>
-    <th>Documento</th><th>Proveedor</th><th>Monto</th><th>Fecha</th><th>Controles</th><th>Hallazgo</th><th>Score</th>
+    <th>Documento</th><th>Proveedor</th><th>Gestor</th><th>Monto</th><th>Fecha</th><th>Controles</th><th>Hallazgo</th><th>Score</th>
     <th>Calificación</th><th>Periodo</th><th>Comentario</th><th>Acción</th></tr></thead><tbody>`;
   list.forEach(({r,ri,sc})=>{
     const uid=`${i}_${ri}`,saved=issues.find(x=>x.uid===uid)||{};
@@ -1052,7 +1105,7 @@ function exTxns(){
     const opts=OPCIONES_RIESGO.map(o=>`<option value="${o}"${saved.calificacion===o?' selected':''}>${o||'-- Calificar --'}</option>`).join('');
     h+=`<tr id="row-${uid}">
       <td style="font-family:monospace;font-size:10px"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${dotc};margin-right:5px"></span>${r.ebeln}</td>
-      <td>${r.lifnr}</td><td style="font-weight:700">${r.monto}</td><td style="font-family:monospace;font-size:10px">${r.fecha||''}</td>
+      <td>${r.lifnr}</td><td style="font-size:10px">${r.gestor}${r.aprobador===r.gestor?' <span class="sod-chip" title="Crea y aprueba la misma orden">SoD</span>':''}</td><td style="font-weight:700">${r.monto}</td><td style="font-family:monospace;font-size:10px">${r.fecha||''}</td>
       <td>${chips}</td><td style="font-size:10px;color:var(--muted)">${r.desc}</td>
       <td><span class="exscore" onclick="showScoreDetail(${i},${ri})" title="Ver desglose del score · modelo de 2 etapas" style="cursor:pointer;background:${scoreCol(sc)}22;color:${scoreCol(sc)}">${sc}</span></td>
       <td><select class="riesgo-sel" id="cal-${uid}" onchange="onCalChange('${uid}')">${opts}</select></td>
@@ -1090,9 +1143,12 @@ function buildPoblacion(){
     C6:{exc:'Anticipo sin OC ni recepción',desv:'Pago anticipado con respaldo'},
     C7:{exc:'Inversión sin activo o presupuesto',desv:'Inversión sin activo o presupuesto'}};
   const XADD={C4:'C5',C5:'C4',C6:'C1',C1:'C4',C2:'C4'};   // transversalidad ocasional
+  const GEST=['jcampos','jcampos','jcampos','jcampos','jcampos','mreyes','mreyes','mreyes','lortega','lortega','pvaldez','snunez','rmendez'];
+  const APR=['agomez','fsalas','dcastro','mvera'];
   const mk=(cid,riesgo,mMin,mMax)=>{const monto=Math.round(mMin+rnd()*(mMax-mMin));
     const controles=[cid];if(XADD[cid]&&rnd()<0.3)controles.push(XADD[cid]);
-    return {ctrl:cid,controles,riesgo,monto,desc:HALL[cid][riesgo==='CRITICO'?'exc':'desv'],lifnr:pick(PROV),fecha:fecha(),ebeln:mkdoc(cid),score:scoreOf(controles,riesgo,monto)};};
+    const gestor=pick(GEST), aprobador=(rnd()<0.14)?gestor:pick(APR);
+    return {ctrl:cid,controles,riesgo,monto,desc:HALL[cid][riesgo==='CRITICO'?'exc':'desv'],lifnr:pick(PROV),gestor,aprobador,fecha:fecha(),ebeln:mkdoc(cid),score:scoreOf(controles,riesgo,monto)};};
   FOCUS_TX=[];
   CTRLS.forEach((c,i)=>{const cid='C'+(i+1);
     for(let k=0;k<CTRLMETA[i].exc;k++)FOCUS_TX.push(mk(cid,'CRITICO',5000,55000));   // excepciones: montos altos
@@ -1187,12 +1243,14 @@ function renderFocoTabla(nn){
   const sel=FOCUS_TX.slice(0,nn), usd=CUM[nn];
   const cnt=document.getElementById('foco-muestra-n');
   if(cnt)cnt.textContent=`· ${sel.length.toLocaleString('es-EC')} transacciones · USD ${usd.toLocaleString('es-EC')}`;
-  let h=`<div class="foco-tabla-wrap"><table class="exc-table"><thead><tr><th>#</th><th>Score</th><th>Documento</th><th>Proveedor</th><th>Monto USD</th><th>Ctrl</th><th>Controles</th><th>Riesgo</th><th>Hallazgo</th></tr></thead><tbody>`;
+  let h=`<div class="foco-tabla-wrap"><table class="exc-table"><thead><tr><th>#</th><th>Score</th><th>Documento</th><th>Proveedor</th><th>Gestor</th><th>Monto USD</th><th>Ctrl</th><th>Controles</th><th>Riesgo</th><th>Hallazgo</th></tr></thead><tbody>`;
   sel.forEach((t,k)=>{const col=scoreCol(t.score),pill=t.riesgo==='CRITICO'?'pill-crit':'pill-warn';
     h+=`<tr><td style="color:var(--muted)">${k+1}</td>
       <td><span class="exscore" style="background:${col}22;color:${col}">${t.score}</span></td>
       <td style="font-family:monospace;font-size:10px">${t.ebeln}</td>
-      <td>${t.lifnr}</td><td style="font-weight:700">${t.monto.toLocaleString('es-EC')}</td>
+      <td>${t.lifnr}</td>
+      <td style="font-size:10px">${t.gestor}${t.aprobador===t.gestor?' <span class="sod-chip">SoD</span>':''}</td>
+      <td style="font-weight:700">${t.monto.toLocaleString('es-EC')}</td>
       <td style="font-family:monospace;font-size:10px">${t.ctrl}</td>
       <td>${t.controles.map(cc=>`<span class="chipc">${cc}</span>`).join('')}</td>
       <td><span class="pill ${pill}">${t.riesgo}</span></td>
@@ -1202,9 +1260,9 @@ function renderFocoTabla(nn){
 }
 function exportMuestra(){
   const sel=currentMuestra(), pct=document.getElementById('foco-range').value;
-  const head=['#','Score','Documento','Proveedor','Monto USD','Control principal','Controles incumplidos','Riesgo','Hallazgo','Fecha'];
+  const head=['#','Score','Documento','Proveedor','Gestor','Aprobador','Crea y aprueba','Monto USD','Control principal','Controles incumplidos','Riesgo','Hallazgo','Fecha'];
   const rows=[head];
-  sel.forEach((t,k)=>rows.push([k+1,t.score,t.ebeln,t.lifnr,t.monto,t.ctrl,t.controles.join(' / '),t.riesgo,t.desc,t.fecha]));
+  sel.forEach((t,k)=>rows.push([k+1,t.score,t.ebeln,t.lifnr,t.gestor,t.aprobador,(t.gestor===t.aprobador?'SI':'NO'),t.monto,t.ctrl,t.controles.join(' / '),t.riesgo,t.desc,t.fecha]));
   const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download=`muestra_focos_riesgo_${pct}pct_${new Date().toISOString().slice(0,10)}.csv`;a.click();
